@@ -74,7 +74,7 @@ group :development do
 end
 
 group :development, :test do
-  gem "rspec-rails", "~> 7.0"
+  gem "rspec-rails", "~> 8.0"
   gem "factory_bot_rails"      # Replaces fixtures with reusable model generators
   gem "faker"                   # Generates realistic sample names, emails, phones
   gem "shoulda-matchers", "~> 6.0" # Clean one-line validation & association matchers
