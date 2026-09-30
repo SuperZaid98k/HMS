@@ -40,6 +40,8 @@ plugin :tmp_restart
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 
-# config/puma.rb
 # Embed Solid Queue supervisor inside the Puma process
-# plugin :solid_queue if ENV.fetch("SOLID_QUEUE_IN_PUMA", "true") == "true"
+if ENV.fetch("SOLID_QUEUE_IN_PUMA", "true") == "true"
+  plugin :solid_queue
+  solid_queue_mode :async unless Process.respond_to?(:fork)
+end

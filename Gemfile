@@ -73,12 +73,6 @@ group :development do
   gem "letter_opener_web", "~> 3.0"
 end
 
-# Background job processor
-gem "sidekiq"
-
-# Recurring cron scheduler for Sidekiq
-gem "sidekiq-cron"
-
 group :development, :test do
   gem "rspec-rails", "~> 7.0"
   gem "factory_bot_rails"      # Replaces fixtures with reusable model generators
@@ -91,9 +85,6 @@ group :test do
   gem "capybara"
   gem "capybara-playwright-driver"
 end
-
-# Database-backed background processing
-# gem "solid_queue"
 
 # Web dashboard for monitoring background jobs (replaces Sidekiq Web)
 gem "mission_control-jobs"

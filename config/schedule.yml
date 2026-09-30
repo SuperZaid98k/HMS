@@ -1,7 +1,0 @@
-# config/schedule.yml
-daily_doctor_appointment_reminders:
-  # Runs every morning at 7:00 AM
-  cron: "0 7 * * *"
-  class: "DailyDoctorAppointmentReminderJob"
-  queue: default
-  description: "Sends daily appointment schedule to doctors every morning at 7:00 AM"

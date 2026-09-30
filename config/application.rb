@@ -20,7 +20,10 @@ module Hms
     
     # Store time in the database in UTC or local:
     config.active_record.default_timezone = :utc
-    config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_adapter = :solid_queue
+
+    # Mission Control Jobs dashboard authentication is handled via Devise in routes.rb
+    config.mission_control.jobs.http_basic_auth_enabled = false
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

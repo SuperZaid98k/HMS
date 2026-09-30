@@ -1,8 +1,3 @@
-
-require "sidekiq/web"
-require "sidekiq/cron/web" # Enables the 'Cron' tab in the Sidekiq dashboard
-
-
 Rails.application.routes.draw do
   devise_for :users
 
@@ -77,20 +72,11 @@ Rails.application.routes.draw do
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
 
-  # if Rails.env.development?
-  #   mount Sidekiq::Web => "/sidekiq"
-  # else
-  #   authenticate :user, ->(u) { u.admin? } do
-  #     mount Sidekiq::Web => "/sidekiq"
-  #   end
-  # end
   get "/partner-with-us", to: "hospital_requests#new", as: :partner_with_us
-
   resources :hospital_requests, only: [:new, :create, :show]
-  
-  
-  authenticate :user, ->(user) { user.role == "admin" } do
+
+  # Solid Queue dashboard via Mission Control Jobs
+  authenticate :user, ->(user) { user.admin? } do
     mount MissionControl::Jobs::Engine, at: "/jobs"
   end
-
 end

@@ -61,7 +61,7 @@ RSpec.configure do |config|
   config.include Devise::Test::IntegrationHelpers, type: :request
   config.include Devise::Test::IntegrationHelpers, type: :system
 
-  # ActiveJob test helpers (for verifying Sidekiq / deliver_later queues)
+  # ActiveJob test helpers (for verifying Solid Queue / deliver_later queues)
   config.include ActiveJob::TestHelper
 
   # Keep jobs in memory for all unit and controller tests

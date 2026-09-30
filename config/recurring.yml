@@ -9,7 +9,19 @@
 #     priority: 2
 #     schedule: at 5am every day
 
+default: &default
+  daily_doctor_appointment_reminders:
+    class: DailyDoctorAppointmentReminderJob
+    queue: default
+    schedule: "0 7 * * *"
+    description: "Sends daily appointment schedule to doctors every morning at 7:00 AM"
+
+development:
+  <<: *default
+
 production:
+  <<: *default
   clear_solid_queue_finished_jobs:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
     schedule: every hour at minute 12
+
