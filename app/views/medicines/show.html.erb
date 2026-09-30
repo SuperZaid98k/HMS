@@ -1,0 +1,36 @@
+
+
+<div class="container mt-4">
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+      <h3 class="mb-0"><%= @medicine.name %></h3>
+      <span class="badge bg-light text-primary fs-6">ID: #<%= @medicine.id %></span>
+    </div>
+
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-sm-3 text-muted">Description</div>
+        <div class="col-sm-9 fw-semibold"><%= @medicine.description.presence || "Not specified" %></div>
+      </div>
+    </div>
+
+    <div class="card-footer bg-light d-flex justify-content-between">
+      <% if can? :read, Medicine %>
+        <%= link_to "Back to medicine List", medicines_path, class: "btn btn-secondary" %>
+      <% end %>
+
+      <div class="d-flex gap-2">
+        <% if can? :update, @medicine %>
+          <%= link_to "Edit Details", edit_medicine_path(@medicine), class: "btn btn-warning" %>
+        <% end %>
+        <% if can? :destroy, @medicine %>
+          <%= button_to "Delete medicine", medicine_path(@medicine),
+                        method: :delete,
+                        class: "btn btn-danger",
+                        data: { turbo_confirm: "Are you sure you want to permanently delete #{@medicine.name}?" } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

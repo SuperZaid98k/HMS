@@ -1,0 +1,58 @@
+@theme {
+    /* Add custom theme variables here if needed */
+}
+
+/* --- Buttons --- */
+.btn {
+    @apply inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-200 cursor-pointer;
+}
+
+.btn-primary {
+    @apply px-4 py-2 bg-blue-600 text-black hover:bg-blue-700 shadow-sm;
+}
+
+.btn-sm {
+    @apply px-3 py-1.5 text-sm;
+}
+
+.btn-warning {
+    @apply bg-amber-500 text-white hover:bg-amber-600 shadow-sm;
+}
+
+.btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700 shadow-sm;
+}
+
+/* --- Tables --- */
+.table-wrapper {
+    @apply overflow-hidden rounded-lg shadow ring-1 ring-black/5 mt-4;
+}
+
+.table-custom {
+    @apply min-w-full divide-y divide-gray-300 text-sm text-left;
+}
+
+.table-dark-head {
+    @apply bg-gray-900 text-white font-semibold tracking-wide;
+}
+
+.table-th {
+    @apply px-4 py-3;   
+}
+
+.table-row {
+    @apply bg-white hover:bg-gray-50 even:bg-gray-50 transition-colors;
+}
+
+.table-td {
+    @apply whitespace-nowrap px-4 py-3 text-gray-700 align-middle;
+}
+
+/* --- Alerts --- */
+.alert-success {
+    @apply rounded-md bg-green-50 p-4 mb-4 border border-green-200 text-sm font-medium text-green-800 shadow-sm;
+}
+
+.alert-info {
+    @apply rounded-md bg-blue-50 p-4 text-sm font-medium text-blue-800 border border-blue-200 shadow-sm;
+}

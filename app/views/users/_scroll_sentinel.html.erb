@@ -1,0 +1,13 @@
+<%# app/views/users/_scroll_sentinel.html.erb %>
+<div id="scroll-sentinel" class="p-6 text-center my-4" data-next-page="<%= next_page %>">
+  <%= link_to users_path(page: next_page, query: params[:query], format: :turbo_stream),
+              id: "load-more-users-btn",
+              data: { turbo_stream: true },
+              class: "inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 text-xs font-bold border border-teal-200 transition shadow-sm cursor-pointer" do %>
+    <svg class="animate-spin w-4 h-4 text-teal-600" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+    </svg>
+    <span>Loading more users...</span>
+  <% end %>
+</div>

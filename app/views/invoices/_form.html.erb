@@ -1,0 +1,169 @@
+<%
+  patients_list = @patients || Patient.includes(:patient_profile).order(:created_at)
+  appointments_list = @appointments || Appointment.includes(:patient, :doctor_profile).order(scheduled_at: :desc).limit(50)
+%>
+
+<%= form_with(model: invoice, class: "space-y-6", id: "invoice-form") do |form| %>
+
+  <!-- Error Summary Block -->
+  <% if invoice.errors.any? %>
+    <div class="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs">
+      <div class="flex items-center gap-2 font-bold mb-1">
+        <span>⚠️</span>
+        <span><%= pluralize(invoice.errors.count, "error") %> prohibited this invoice from being saved:</span>
+      </div>
+      <ul class="list-disc list-inside space-y-0.5 ml-4">
+        <% invoice.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- SECTION 1: Invoice Header Details -->
+  <div class="space-y-4">
+    <div class="border-b border-gray-100 pb-2">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-teal-700">1. Invoice Identity & Registration</h3>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <%= form.label :invoice_number, "Invoice Reference Number *", class: "block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1" %>
+        <%= form.text_field :invoice_number, 
+              placeholder: "e.g. INV-10001", 
+              required: true,
+              class: "w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-slate-50/50 outline-none transition font-mono" %>
+      </div>
+
+      <div>
+        <%= form.label :status, "Payment Status *", class: "block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1" %>
+        <%= form.select :status, 
+              [["Due (Unpaid)", "due"], ["Paid in Full", "paid"], ["Partially Paid", "partial"], ["Cancelled", "cancelled"]], 
+              { prompt: "-- Select Payment Status --" }, 
+              { class: "w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-slate-50/50 outline-none transition", required: true } %>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <%= form.label :patient_id, "Billed Patient *", class: "block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1" %>
+        <%= form.collection_select :patient_id, 
+              patients_list, 
+              :id, 
+              ->(p) { p.patient_profile ? "#{p.patient_profile.first_name} #{p.patient_profile.last_name} (#{p.patient_number})" : "Patient ##{p.patient_number || p.id}" }, 
+              { prompt: "-- Choose Patient Record --" }, 
+              { class: "w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-slate-50/50 outline-none transition", required: true } %>
+      </div>
+
+      <div>
+        <%= form.label :appointment_id, "Associated Consultation (Optional)", class: "block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1" %>
+        <%= form.collection_select :appointment_id, 
+              appointments_list, 
+              :id, 
+              ->(a) { "Appointment ##{a.id} - #{a.scheduled_at.try(:strftime, '%b %d, %Y') || 'Date TBD'}" }, 
+              { include_blank: "-- None / Direct Inpatient Billing --" }, 
+              { class: "w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-slate-50/50 outline-none transition" } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Line Items & Live Calculation -->
+  <div class="space-y-4 pt-2">
+    <div class="border-b border-gray-100 pb-2 flex items-center justify-between">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-teal-700">2. Itemized Clinical Charges</h3>
+      <span class="text-[11px] text-gray-400 font-medium">Auto-computed from line items</span>
+    </div>
+
+    <div class="bg-slate-50/70 p-4 sm:p-5 rounded-2xl border border-gray-200/90 space-y-4">
+      <%= form.fields_for :invoice_items do |item_form| %>
+        <div class="invoice-item-row grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+          
+          <div class="sm:col-span-6">
+            <%= item_form.label :description, "Charge Item Description *", class: "block text-[11px] font-bold uppercase tracking-wider text-gray-600 mb-1" %>
+            <%= item_form.text_field :description, 
+                  placeholder: "e.g. Doctor Consultation, Blood Panel, Ward Bed Charge", 
+                  required: true,
+                  class: "w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-white outline-none transition" %>
+          </div>
+
+          <div class="sm:col-span-2">
+            <%= item_form.label :quantity, "Qty *", class: "block text-[11px] font-bold uppercase tracking-wider text-gray-600 mb-1" %>
+            <%= item_form.number_field :quantity, 
+                  value: item_form.object.quantity || 1, 
+                  min: 1, 
+                  step: 1,
+                  required: true,
+                  class: "item-qty w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-white outline-none transition text-center font-mono" %>
+          </div>
+
+          <div class="sm:col-span-4">
+            <%= item_form.label :amount, "Unit Price ($ / ₹) *", class: "block text-[11px] font-bold uppercase tracking-wider text-gray-600 mb-1" %>
+            <div class="relative">
+              <%= item_form.number_field :amount, 
+                    placeholder: "0.00", 
+                    step: "0.01", 
+                    min: "0", 
+                    required: true,
+                    class: "item-amount w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm bg-white outline-none transition font-mono" %>
+            </div>
+          </div>
+
+        </div>
+      <% end %>
+
+      <!-- Dynamic Computation Preview Card -->
+      <div class="flex items-center justify-between pt-3 border-t border-gray-200/80">
+        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Calculated Total:</span>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-400 font-mono">Invoice Amount:</span>
+          <span id="calculated-total-display" class="text-xl font-black text-teal-700 font-mono">$0.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <%= form.submit (invoice.new_record? ? "Generate & Save Invoice" : "Update Invoice"), 
+          class: "w-full sm:w-auto px-6 py-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer" %>
+    
+    <%= link_to "Cancel", invoices_path, 
+          class: "w-full sm:w-auto text-center px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-600 font-semibold text-xs transition" %>
+  </div>
+
+<% end %>
+
+<!-- Client-side Real-time Total Calculation Script -->
+<script>
+  function setupInvoiceTotalCalculation() {
+    const qtyInputs = document.querySelectorAll(".item-qty");
+    const amountInputs = document.querySelectorAll(".item-amount");
+    const display = document.getElementById("calculated-total-display");
+
+    if (!display) return;
+
+    function recalculateTotal() {
+      let total = 0.0;
+      const rows = document.querySelectorAll(".invoice-item-row");
+
+      rows.forEach(row => {
+        const qtyInput = row.querySelector(".item-qty");
+        const amtInput = row.querySelector(".item-amount");
+
+        const qty = parseFloat(qtyInput ? qtyInput.value : 1) || 0;
+        const amt = parseFloat(amtInput ? amtInput.value : 0) || 0;
+        total += (qty * amt);
+      });
+
+      display.textContent = `$${total.toFixed(2)}`;
+    }
+
+    qtyInputs.forEach(input => input.addEventListener("input", recalculateTotal));
+    amountInputs.forEach(input => input.addEventListener("input", recalculateTotal));
+
+    recalculateTotal();
+  }
+
+  document.addEventListener("turbo:load", setupInvoiceTotalCalculation);
+  document.addEventListener("DOMContentLoaded", setupInvoiceTotalCalculation);
+</script>

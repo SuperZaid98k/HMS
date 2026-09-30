@@ -1,0 +1,53 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Admission Record #<%= @admission.id %></h1>
+    <div class="d-flex gap-2">
+      <% if can? :update, @admission %>
+        <%= link_to "Edit Admission", edit_admission_path(@admission), class: "btn btn-warning" %>
+      <% end %>
+      <%= link_to "Back to Admissions", admissions_path, class: "btn btn-outline-secondary" %>
+    </div>
+  </div>
+
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      Admission Details
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-3 fw-semibold">Patient:</div>
+        <div class="col-sm-9 mb-3">
+          <% if @admission.patient&.patient_profile %>
+            <%= link_to "#{@admission.patient.patient_profile.first_name} #{@admission.patient.patient_profile.last_name} (#{@admission.patient.patient_number})", patient_path(@admission.patient) %>
+          <% else %>
+            Patient #<%= @admission.patient_id %>
+          <% end %>
+        </div>
+
+        <div class="col-sm-3 fw-semibold">Bed Assignment:</div>
+        <div class="col-sm-9 mb-3">
+          <% if @admission.bed %>
+            Bed #<%= @admission.bed.bed_number %> 
+            (Room <%= @admission.bed.room&.room_number %>, Ward <%= @admission.bed.room&.ward&.name %>)
+          <% else %>
+            Unassigned
+          <% end %>
+        </div>
+
+        <div class="col-sm-3 fw-semibold">Admitted At:</div>
+        <div class="col-sm-9 mb-3"><%= @admission.admitted_at %></div>
+
+        <div class="col-sm-3 fw-semibold">Discharged At:</div>
+        <div class="col-sm-9 mb-3"><%= @admission.discharged_at.presence || "Currently Admitted" %></div>
+
+        <div class="col-sm-3 fw-semibold">Status:</div>
+        <div class="col-sm-9 mb-3">
+          <span class="badge <%= @admission.status == 'admitted' ? 'bg-primary' : 'bg-secondary' %>">
+            <%= @admission.status %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

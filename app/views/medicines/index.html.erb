@@ -1,0 +1,57 @@
+
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>medicine List</h1>
+    <% if can? :create, Medicine %>
+      <%= link_to "Create medicine", new_medicine_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+
+  <% if @medicines.any? %>
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @medicines.each do |medicine| %>
+          <tr>
+            <td><%= medicine.id %></td>
+            <td><strong><%= medicine.name %></strong></td>
+            <td><%= medicine.description %></td>
+            <td class="text-end">
+              <!-- medicine Details -->
+              <% if can? :read, medicine %>
+                <%= link_to "Details", medicine_path(medicine), class: "btn btn-sm btn-info text-white me-1" %>
+              <% end %>
+              
+              <!-- Edit medicine -->
+              <% if can? :update, medicine %>
+                <%= link_to "Edit", edit_medicine_path(medicine), class: "btn btn-sm btn-warning me-1" %>
+              <% end %>
+              
+              <!-- Delete medicine -->
+              <% if can? :destroy, medicine %>
+                <%= button_to "Delete", medicine_path(medicine), 
+                              method: :delete, 
+                              class: "btn btn-sm btn-danger d-inline", 
+                              form: { style: "display:inline-block;" },
+                              data: { turbo_confirm: "Are you sure you want to delete #{medicine.name}?" } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="alert alert-info">
+      No medicines found. Click "Create medicine" to add one.
+    </div>
+  <% end %>
+</div>

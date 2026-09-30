@@ -1,0 +1,40 @@
+<div class="min-h-screen bg-slate-50 py-10">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+
+    <!-- Top Breadcrumb & Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-2.5 h-6 rounded-full bg-teal-600 inline-block"></span>
+          <span class="text-xs font-bold uppercase tracking-wider text-teal-700">Pathology Calibration</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+          Edit Laboratory Result
+        </h1>
+        <p class="text-xs sm:text-sm text-gray-500 mt-0.5">
+          Modifying recorded finding for <strong class="text-slate-800"><%= @lab_test.test_name %></strong>
+        </p>
+      </div>
+
+      <%= link_to lab_test_path(@lab_test), class: "self-start sm:self-center inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-teal-700 bg-white px-3.5 py-2 rounded-xl border border-gray-200 shadow-sm hover:shadow transition" do %>
+        <span>← View Lab Order</span>
+      <% end %>
+    </div>
+
+    <!-- Modification Audit Warning -->
+    <div class="flex items-center gap-3 p-4 rounded-2xl bg-amber-50 border border-amber-200/80 text-amber-900 text-xs shadow-sm">
+      <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0 text-sm">
+        ⚠️
+      </div>
+      <div>
+        <strong class="font-bold">Medical Record Revision:</strong> Updating laboratory results amends the active electronic clinical chart for consulting physicians.
+      </div>
+    </div>
+
+    <!-- Main Form Container -->
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-200/90 p-6 sm:p-10">
+      <%= render "form", lab_test_result: @lab_test_result %>
+    </div>
+
+  </div>
+</div>

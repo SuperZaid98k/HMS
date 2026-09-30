@@ -1,0 +1,61 @@
+<%= form_with(model: prescription, class: "needs-validation") do |form| %>
+  <% if prescription.errors.any? %>
+    <div class="alert alert-danger">
+      <h5 class="alert-heading"><%= pluralize(prescription.errors.count, "error") %> prohibited this prescription from being saved:</h5>
+      <ul class="mb-0">
+        <% prescription.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :patient_id, "Select Patient", class: "form-label" %>
+    <%= form.collection_select :patient_id, Patient.all, :id, ->(p) { p.patient_profile ? "#{p.patient_profile.first_name} #{p.patient_profile.last_name} (#{p.patient_number})" : "Patient ##{p.patient_number}" }, { prompt: "-- Select Patient --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :doctor_profile_id, "Prescribing Doctor", class: "form-label" %>
+    <%= form.collection_select :doctor_profile_id, DoctorProfile.all, :id, ->(d) { "Dr. #{d.name} (#{d.department&.name})" }, { prompt: "-- Select Doctor --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :medical_record_id, "Associated Medical Record (Optional)", class: "form-label" %>
+    <%= form.collection_select :medical_record_id, MedicalRecord.all, :id, ->(m) { "Record ##{m.id} - #{m.diagnosis} (Patient ##{m.patient_id})" }, { include_blank: "-- None --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :prescribed_at, "Date & Time Prescribed", class: "form-label" %>
+    <%= form.text_field :prescribed_at, class: "form-control", value: prescription.prescribed_at || Time.current.strftime("%Y-%m-%d %H:%M") %>
+  </div>
+
+  <div class="card p-3 mb-4 bg-light">
+    <h5 class="mb-3">Add Medicine Item</h5>
+    <%= form.fields_for :prescription_items do |item_form| %>
+      <div class="row">
+        <div class="col-sm-3 mb-2">
+          <%= item_form.label :medicine_id, "Medicine", class: "form-label" %>
+          <%= item_form.collection_select :medicine_id, Medicine.all, :id, :name, { prompt: "-- Select Medicine --" }, { class: "form-control" } %>
+        </div>
+        <div class="col-sm-3 mb-2">
+          <%= item_form.label :dosage, "Dosage", class: "form-label" %>
+          <%= item_form.text_field :dosage, class: "form-control", placeholder: "e.g. 500mg" %>
+        </div>
+        <div class="col-sm-3 mb-2">
+          <%= item_form.label :frequency, "Frequency", class: "form-label" %>
+          <%= item_form.text_field :frequency, class: "form-control", placeholder: "e.g. Twice daily" %>
+        </div>
+        <div class="col-sm-3 mb-2">
+          <%= item_form.label :duration, "Duration", class: "form-label" %>
+          <%= item_form.text_field :duration, class: "form-control", placeholder: "e.g. 5 days" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", prescriptions_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

@@ -1,0 +1,85 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Lab Test: <%= @lab_test.test_name %></h1>
+    <div class="d-flex gap-2">
+      <% if can? :update, @lab_test %>
+        <%= link_to "Edit Test", edit_lab_test_path(@lab_test), class: "btn btn-warning" %>
+      <% end %>
+      <%= link_to "Back to Lab Tests", lab_tests_path, class: "btn btn-outline-secondary" %>
+    </div>
+  </div>
+
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      Test Details
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-3 fw-semibold">Patient:</div>
+        <div class="col-sm-9 mb-3">
+          <% if @lab_test.patient&.patient_profile %>
+            <%= link_to "#{@lab_test.patient.patient_profile.first_name} #{@lab_test.patient.patient_profile.last_name}", patient_path(@lab_test.patient) %>
+          <% else %>
+            Patient #<%= @lab_test.patient_id %>
+          <% end %>
+        </div>
+
+        <div class="col-sm-3 fw-semibold">Ordering Doctor:</div>
+        <div class="col-sm-9 mb-3">
+          <% if @lab_test.doctor_profile %>
+            <%= link_to "Dr. #{@lab_test.doctor_profile.name}", doctor_profile_path(@lab_test.doctor_profile) %>
+          <% else %>
+            N/A
+          <% end %>
+        </div>
+
+        <div class="col-sm-3 fw-semibold">Requested Date:</div>
+        <div class="col-sm-9 mb-3"><%= @lab_test.requested_at %></div>
+
+        <div class="col-sm-3 fw-semibold">Status:</div>
+        <div class="col-sm-9 mb-3">
+          <span class="badge <%= @lab_test.status == 'done' ? 'bg-success' : 'bg-warning' %> text-white">
+            <%= @lab_test.status %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Result Section -->
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span>Laboratory Result</span>
+      <% if @lab_test.lab_test_result %>
+        <% if can? :update, @lab_test.lab_test_result %>
+          <%= link_to "Edit Result", edit_lab_test_lab_test_result_path(@lab_test), class: "btn btn-sm btn-warning" %>
+        <% end %>
+      <% else %>
+        <% if can? :create, LabTestResult %>
+          <%= link_to "+ Record Result", new_lab_test_lab_test_result_path(@lab_test), class: "btn btn-sm btn-primary" %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="card-body">
+      <% if @lab_test.lab_test_result %>
+        <% res = @lab_test.lab_test_result %>
+        <div class="row">
+          <div class="col-sm-3 fw-semibold">Test Result:</div>
+          <div class="col-sm-9 mb-3"><strong class="fs-4 text-primary"><%= res.result %></strong></div>
+
+          <div class="col-sm-3 fw-semibold">Reference Range:</div>
+          <div class="col-sm-9 mb-3"><%= res.reference_range.presence || "N/A" %></div>
+
+          <div class="col-sm-3 fw-semibold">Unit of Measurement:</div>
+          <div class="col-sm-9 mb-3"><%= res.unit.presence || "N/A" %></div>
+
+          <div class="col-sm-3 fw-semibold">Tested Date:</div>
+          <div class="col-sm-9 mb-3"><%= res.tested_at %></div>
+        </div>
+      <% else %>
+        <p class="text-muted mb-0">No result recorded for this test yet. Click "Record Result" to add test findings.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

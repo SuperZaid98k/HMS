@@ -1,0 +1,74 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Laboratory Tests</h1>
+    <% if can? :create, LabTest %>
+      <%= link_to "Order Lab Test", new_lab_test_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+
+  <% if @lab_tests.any? %>
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Test Name</th>
+          <th>Patient</th>
+          <th>Ordering Doctor</th>
+          <th>Requested Date</th>
+          <th>Status</th>
+          <th>Result Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @lab_tests.each do |lt| %>
+          <tr>
+            <td><%= lt.id %></td>
+            <td><strong><%= lt.test_name %></strong></td>
+            <td>
+              <% if lt.patient&.patient_profile %>
+                <%= link_to "#{lt.patient.patient_profile.first_name} #{lt.patient.patient_profile.last_name}", patient_path(lt.patient) %>
+              <% else %>
+                Patient #<%= lt.patient_id %>
+              <% end %>
+            </td>
+            <td>Dr. <%= lt.doctor_profile&.name || "N/A" %></td>
+            <td><%= lt.requested_at || "-" %></td>
+            <td>
+              <span class="badge <%= lt.status == 'done' ? 'bg-success' : 'bg-warning' %> text-white">
+                <%= lt.status %>
+              </span>
+            </td>
+            <td>
+              <% if lt.lab_test_result %>
+                <span class="badge bg-primary"><%= lt.lab_test_result.result %></span>
+              <% else %>
+                <span class="text-muted">Awaiting Result</span>
+              <% end %>
+            </td>
+            <td class="text-end">
+              <% if can? :read, lt %>
+                <%= link_to "Details", lab_test_path(lt), class: "btn btn-sm btn-info text-white me-1" %>
+              <% end %>
+              <% if can? :update, lt %>
+                <%= link_to "Edit", edit_lab_test_path(lt), class: "btn btn-sm btn-warning me-1" %>
+              <% end %>
+              <% if can? :destroy, lt %>
+                <%= button_to "Delete", lab_test_path(lt), 
+                              method: :delete, 
+                              class: "btn btn-sm btn-danger d-inline", 
+                              form: { style: "display:inline-block;" },
+                              data: { turbo_confirm: "Are you sure you want to delete this lab test?" } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="alert alert-info">
+      No lab tests ordered yet. Click "Order Lab Test" to add one.
+    </div>
+  <% end %>
+</div>

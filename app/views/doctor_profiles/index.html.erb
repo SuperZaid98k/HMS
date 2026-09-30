@@ -1,0 +1,286 @@
+<%
+  # Curated doctor portraits (matching the home page theme)
+  doctor_photos = [
+    "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80",
+    "https://i.pravatar.cc/300?img=24",
+    "https://i.pravatar.cc/300?img=5",
+    "https://i.pravatar.cc/300?img=36",
+    "https://i.pravatar.cc/300?img=13",
+    "https://i.pravatar.cc/300?img=41",
+    "https://i.pravatar.cc/300?img=18",
+    "https://i.pravatar.cc/300?img=9",
+    "https://i.pravatar.cc/300?img=29",
+    "https://i.pravatar.cc/300?img=1",
+    "https://i.pravatar.cc/300?img=34",
+    "https://i.pravatar.cc/300?img=15",
+    "https://i.pravatar.cc/300?img=22",
+    "https://i.pravatar.cc/300?img=3",
+    "https://i.pravatar.cc/300?img=38",
+    "https://i.pravatar.cc/300?img=27",
+    "https://i.pravatar.cc/300?img=10",
+    "https://i.pravatar.cc/300?img=31",
+    "https://i.pravatar.cc/300?img=17",
+    "https://i.pravatar.cc/300?img=26",
+    "https://i.pravatar.cc/300?img=8",
+    "https://i.pravatar.cc/300?img=40",
+    "https://i.pravatar.cc/300?img=19",
+    "https://i.pravatar.cc/300?img=12",
+    "https://i.pravatar.cc/300?img=33",
+    "https://i.pravatar.cc/300?img=20",
+    "https://i.pravatar.cc/300?img=23",
+    "https://i.pravatar.cc/300?img=6",
+    "https://i.pravatar.cc/300?img=28",
+    "https://i.pravatar.cc/300?img=11",
+    "https://i.pravatar.cc/300?img=30",
+    "https://i.pravatar.cc/300?img=25",
+    "https://i.pravatar.cc/300?img=16",
+    "https://i.pravatar.cc/300?img=14",
+    "https://i.pravatar.cc/300?img=35",
+    "https://i.pravatar.cc/300?img=32",
+    "https://i.pravatar.cc/300?img=21"
+  ]
+%>
+
+<div class="min-h-screen bg-slate-50 py-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+    <!-- ================= 1. PAGE HEADER & ACTIONS ================= -->
+    <div class="bg-gradient-to-r from-teal-800 via-teal-700 to-cyan-800 rounded-3xl p-6 sm:p-10 text-white shadow-lg relative overflow-hidden">
+      <!-- Subtle decorative background circle -->
+      <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/15 text-teal-100 border border-white/20 uppercase tracking-wider mb-3">
+            Medical Faculty & Consultants
+          </span>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+            Specialist Doctors
+          </h1>
+          <p class="text-teal-100 text-sm sm:text-base mt-1 max-w-xl">
+            Meet our accredited clinicians, surgeons, and specialists. Schedule consultations with guaranteed appointment slots.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-xs font-bold text-teal-100 backdrop-blur-sm">
+            Total: <%= @doctor_profiles.size %> Doctors
+          </span>
+
+          <% if can? :create, DoctorProfile %>
+            <%= link_to new_doctor_profile_path, 
+                  class: "inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-teal-900 font-bold text-xs sm:text-sm hover:bg-teal-50 shadow-md transition transform hover:-translate-y-0.5" do %>
+              <span>+ Add Doctor Profile</span>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 2. LIVE FILTER & SEARCH BAR ================= -->
+    <div class="bg-white rounded-2xl p-4 sm:p-5 border border-gray-200/90 shadow-sm flex flex-col sm:flex-row gap-4 justify-between items-center">
+      <div class="relative w-full sm:w-96">
+        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+          🔍
+        </span>
+        <input type="text" 
+               id="doctorSearchInput" 
+               placeholder="Search by doctor name or specialization..." 
+               class="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-slate-50 transition" />
+      </div>
+
+      <div class="flex items-center gap-2 text-xs text-gray-500 self-end sm:self-center font-medium">
+        <span>✓ Instant Booking</span>
+        <span>•</span>
+        <span>✓ Verified Credentials</span>
+        <span>•</span>
+        <span>✓ OPD Available</span>
+      </div>
+    </div>
+
+    <!-- ================= 3. DOCTORS CARD GRID ================= -->
+    <% if @doctor_profiles.any? %>
+      <div id="doctorsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        
+        <% @doctor_profiles.each do |doctor| %>
+          <% 
+            doc_img = doctor_photos[doctor.id % doctor_photos.length]
+            rating_score = (4.7 + ((doctor.id % 4) * 0.1)).round(1)
+            review_count = 35 + (doctor.id * 14)
+          %>
+
+          <div class="doctor-card bg-white rounded-2xl border border-gray-200/90 shadow-sm hover:shadow-xl hover:border-teal-500 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+               data-searchable="<%= "#{doctor.name} #{doctor.user&.name} #{doctor.department&.name} #{doctor.specializations.map(&:name).join(' ')}".downcase %>">
+            
+            <div class="p-5">
+              <!-- Doctor Image Container with Dynamic Badges -->
+              <div class="relative w-full h-48 rounded-xl overflow-hidden mb-4 bg-slate-100">
+                <img src="<%= doc_img %>" 
+                     alt="Dr. <%= doctor.name %>" 
+                     class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+
+                <!-- Availability Badge -->
+                <span class="absolute top-2.5 left-2.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 text-white shadow-sm">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Active OPD
+                </span>
+
+                <!-- Experience Pill -->
+                <% if doctor.experience_years.present? %>
+                  <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-white/95 text-teal-900 shadow-sm backdrop-blur-sm">
+                    <%= doctor.experience_years %>+ yrs
+                  </span>
+                <% end %>
+
+                <!-- Rating Pill -->
+                <div class="absolute bottom-2 left-2.5 bg-slate-900/75 backdrop-blur-sm text-amber-300 text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                  ★ <%= rating_score %> <span class="text-white font-normal text-[10px]">(<%= review_count %>)</span>
+                </div>
+              </div>
+
+              <!-- Doctor Name & Credentials -->
+              <div class="flex items-center justify-between">
+                <h3 class="text-base font-bold text-gray-900 group-hover:text-teal-600 transition truncate">
+                  Dr. <%= doctor.name.presence || doctor.user&.name || "Consultant" %>
+                </h3>
+                <span class="text-teal-600 text-xs font-bold" title="Verified Clinician">✓</span>
+              </div>
+
+              <p class="text-xs font-semibold text-teal-700 mt-0.5">
+                <%= doctor.department&.name || "General Medicine" %>
+              </p>
+
+
+              <!-- Specialization Chips -->
+              <div class="mt-3 flex flex-wrap gap-1">
+                <% specs = doctor.specializations %>
+                <% if specs.any? %>
+                  <% specs.first(2).each do |spec| %>
+                    <span class="px-2 py-0.5 text-[10px] rounded-md bg-teal-50 text-teal-800 font-medium border border-teal-100">
+                      <%= spec.name %>
+                    </span>
+                  <% end %>
+                  <% if specs.size > 2 %>
+                    <span class="px-1.5 py-0.5 text-[10px] rounded-md bg-gray-100 text-gray-600 font-medium">
+                      +<%= specs.size - 2 %>
+                    </span>
+                  <% end %>
+                <% else %>
+                  <span class="px-2 py-0.5 text-[10px] rounded-md bg-slate-100 text-slate-500 font-medium">Specialist</span>
+                <% end %>
+              </div>
+
+              <!-- Staff / Admin Technical Details (Hidden from regular patient clutter) -->
+              <% if can?(:manage, DoctorProfile) || can?(:update, doctor) %>
+                <div class="mt-4 pt-3 border-t border-gray-100 space-y-1 text-[11px] text-gray-500 font-mono bg-slate-50/70 p-2.5 rounded-lg">
+                  <div class="truncate"><strong>ID:</strong> #<%= doctor.id %></div>
+                  <div class="truncate"><strong>Lic:</strong> <%= doctor.license_number.presence || "Pending" %></div>
+                  <div class="truncate"><strong>User:</strong> <%= doctor.user&.email || "No account" %></div>
+                </div>
+              <% end %>
+            </div>
+
+            <!-- Card Actions Footer -->
+            <div class="p-4 bg-slate-50 border-t border-gray-100 flex flex-col gap-2">
+              
+              <!-- Primary Action: Book Appointment -->
+              <% if can? :create, Appointment %>
+                <%= link_to new_appointment_path(doctor_profile_id: doctor.id), 
+                            class: "w-full py-2.5 px-3 text-center text-xs font-bold rounded-xl bg-teal-600 hover:bg-teal-700 text-white shadow-sm hover:shadow transition" do %>
+                  Book Appointment
+                <% end %>
+              <% end %>
+
+              <!-- Secondary Actions -->
+              <div class="flex justify-between items-center text-xs pt-1">
+                <% if can? :read, doctor %>
+                  <%= link_to "Full Profile →", doctor_profile_path(doctor), 
+                              class: "text-slate-600 hover:text-teal-600 font-semibold" %>
+                <% end %>
+
+                <div class="flex items-center gap-2.5">
+                  <% if can? :update, doctor %>
+                    <%= link_to "Edit", edit_doctor_profile_path(doctor), 
+                                class: "text-amber-600 hover:text-amber-700 font-medium hover:underline" %>
+                  <% end %>
+
+                  <% if can? :destroy, doctor %>
+                    <%= button_to "Delete", doctor_profile_path(doctor), 
+                                  method: :delete, 
+                                  class: "text-red-600 hover:text-red-700 font-medium hover:underline bg-transparent border-0 p-0 text-xs cursor-pointer",
+                                  data: { turbo_confirm: "Are you sure you want to delete Dr. #{doctor.name}?" } %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        <% end %>
+
+      </div>
+
+      <!-- No Search Results Found Message -->
+      <div id="noResultsMessage" class="hidden p-12 text-center bg-white rounded-3xl border border-dashed border-gray-300 text-gray-500 space-y-2">
+        <span class="text-3xl">🩺</span>
+        <h4 class="font-bold text-gray-800">No matching doctors found</h4>
+        <p class="text-xs text-gray-500">Try adjusting your search query or view all specializations.</p>
+      </div>
+
+    <% else %>
+      <!-- Empty State -->
+      <div class="p-16 text-center bg-white rounded-3xl border border-dashed border-gray-300 text-gray-500 space-y-4">
+        <span class="text-4xl">👨‍⚕️</span>
+        <h3 class="text-lg font-bold text-gray-800">No Doctor Profiles Found</h3>
+        <p class="text-sm text-gray-500 max-w-sm mx-auto">
+          There are currently no doctor profiles registered in the system. Click below to add the first clinician.
+        </p>
+        <% if can? :create, DoctorProfile %>
+          <%= link_to "+ Add Doctor Profile", new_doctor_profile_path, class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    <% end %>
+
+  </div>
+</div>
+
+<!-- ================= 4. INSTANT SEARCH JAVASCRIPT ================= -->
+<script>
+  function setupDoctorFilter() {
+    const input = document.getElementById("doctorSearchInput");
+    const cards = document.querySelectorAll(".doctor-card");
+    const noResults = document.getElementById("noResultsMessage");
+
+    if (!input || cards.length === 0) return;
+
+    input.addEventListener("input", (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      let visibleCount = 0;
+
+      cards.forEach((card) => {
+        const data = card.getAttribute("data-searchable") || "";
+        if (data.includes(query)) {
+          card.classList.remove("hidden");
+          visibleCount++;
+        } else {
+          card.classList.add("hidden");
+        }
+      });
+
+      if (noResults) {
+        if (visibleCount === 0) {
+          noResults.classList.remove("hidden");
+        } else {
+          noResults.classList.add("hidden");
+        }
+      }
+    });
+  }
+
+  document.addEventListener("turbo:load", setupDoctorFilter);
+  document.addEventListener("DOMContentLoaded", setupDoctorFilter);
+</script>

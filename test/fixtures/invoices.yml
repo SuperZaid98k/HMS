@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  patient_id: 1
+  appointment_id: 1
+  invoice_number: MyString
+  total_amount: MyString
+  status: MyString
+  issued_at: MyString
+
+two:
+  patient_id: 1
+  appointment_id: 1
+  invoice_number: MyString
+  total_amount: MyString
+  status: MyString
+  issued_at: MyString

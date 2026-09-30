@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  lab_test_id: 1
+  result: MyString
+  unit: MyString
+  reference_range: MyString
+  tested_at: MyString
+
+two:
+  lab_test_id: 1
+  result: MyString
+  unit: MyString
+  reference_range: MyString
+  tested_at: MyString

@@ -1,0 +1,42 @@
+<%= form_with(model: medical_record, class: "needs-validation") do |form| %>
+  <% if medical_record.errors.any? %>
+    <div class="alert alert-danger">
+      <h5 class="alert-heading"><%= pluralize(medical_record.errors.count, "error") %> prohibited this medical record from being saved:</h5>
+      <ul class="mb-0">
+        <% medical_record.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :patient_id, "Select Patient", class: "form-label" %>
+    <%= form.collection_select :patient_id, Patient.all, :id, ->(p) { p.patient_profile ? "#{p.patient_profile.first_name} #{p.patient_profile.last_name} (#{p.patient_number})" : "Patient ##{p.patient_number}" }, { prompt: "-- Select Patient --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :doctor_profile_id, "Select Attending Doctor", class: "form-label" %>
+    <%= form.collection_select :doctor_profile_id, DoctorProfile.all, :id, ->(d) { "Dr. #{d.name} (#{d.department&.name})" }, { prompt: "-- Select Doctor --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :appointment_id, "Associated Appointment", class: "form-label" %>
+    <%= form.collection_select :appointment_id, Appointment.all, :id, ->(a) { "Appointment ##{a.id} - #{a.scheduled_at.try(:strftime, '%Y-%m-%d')}" }, { prompt: "-- Select Appointment --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :diagnosis, "Diagnosis", class: "form-label" %>
+    <%= form.text_field :diagnosis, class: "form-control", placeholder: "e.g. Acute Bronchitis, Type 2 Diabetes" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description, "Clinical Description / Observations", class: "form-label" %>
+    <%= form.text_area :description, rows: 4, class: "form-control", placeholder: "Enter clinical notes, symptoms, and observations..." %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", medical_records_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

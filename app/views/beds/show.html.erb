@@ -1,0 +1,29 @@
+
+<div class="container mt-4">
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+    <h5 class="mb-0">Bed No.: <%= @bed.bed_number %></h5>
+      <h2 class="mb-0"><%= @bed.status %></h2>
+      <span class="badge bg-light text-primary fs-6">ID: #<%= @bed.id %></span>
+    </div>
+
+    <div class="card-footer bg-light d-flex justify-content-between">
+      <% if can? :read, @room %>
+        <%= link_to "Back to bed List", room_path(@room), class: "btn btn-secondary" %>
+      <% end %>
+
+      <div class="d-flex gap-2">
+        <% if can? :update, @bed %>
+          <%= link_to "Edit Details", edit_bed_path(@bed), class: "btn btn-warning" %>
+        <% end %>
+        <% if can? :destroy, @bed %>
+          <%= button_to "Delete bed", bed_path(@bed),
+                        method: :delete,
+                        class: "btn btn-danger",
+                        data: { turbo_confirm: "Are you sure you want to permanently delete #{@bed.bed_number}?" } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Prescriptions</h1>
+    <% if can? :create, Prescription %>
+      <%= link_to "New Prescription", new_prescription_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+
+  <% if @prescriptions.any? %>
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Patient</th>
+          <th>Doctor</th>
+          <th>Medical Record</th>
+          <th>Prescribed At</th>
+          <th>Medicines Count</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @prescriptions.each do |p| %>
+          <tr>
+            <td><%= p.id %></td>
+            <td>
+              <% if p.patient&.patient_profile %>
+                <%= link_to "#{p.patient.patient_profile.first_name} #{p.patient.patient_profile.last_name}", patient_path(p.patient) %>
+              <% else %>
+                Patient #<%= p.patient_id %>
+              <% end %>
+            </td>
+            <td>Dr. <%= p.doctor_profile&.name || "N/A" %></td>
+            <td>
+              <% if p.medical_record %>
+                <%= link_to "Record ##{p.medical_record.id} (#{p.medical_record.diagnosis})", medical_record_path(p.medical_record) %>
+              <% else %>
+                -
+              <% end %>
+            </td>
+            <td><%= p.prescribed_at || "-" %></td>
+            <td><span class="badge bg-secondary"><%= p.prescription_items.count %> medicines</span></td>
+            <td class="text-end">
+              <% if can? :read, p %>
+                <%= link_to "Details", prescription_path(p), class: "btn btn-sm btn-info text-white me-1" %>
+              <% end %>
+              <% if can? :update, p %>
+                <%= link_to "Edit", edit_prescription_path(p), class: "btn btn-sm btn-warning me-1" %>
+              <% end %>
+              <% if can? :destroy, p %>
+                <%= button_to "Delete", prescription_path(p), 
+                              method: :delete, 
+                              class: "btn btn-sm btn-danger d-inline", 
+                              form: { style: "display:inline-block;" },
+                              data: { turbo_confirm: "Are you sure you want to delete this prescription?" } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="alert alert-info">
+      No prescriptions recorded yet. Click "New Prescription" to issue one.
+    </div>
+  <% end %>
+</div>

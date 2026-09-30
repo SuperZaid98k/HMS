@@ -1,0 +1,60 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Medical Records</h1>
+    <% if can? :create, MedicalRecord %>
+      <%= link_to "New Medical Record", new_medical_record_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+
+  <% if @medical_records.any? %>
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Patient</th>
+          <th>Doctor</th>
+          <th>Diagnosis</th>
+          <th>Description</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @medical_records.each do |mr| %>
+          <tr>
+            <td><%= mr.id %></td>
+            <td>
+              <% if mr.patient&.patient_profile %>
+                <%= link_to "#{mr.patient.patient_profile.first_name} #{mr.patient.patient_profile.last_name}", patient_path(mr.patient) %>
+              <% else %>
+                Patient #<%= mr.patient_id %>
+              <% end %>
+            </td>
+            <td>Dr. <%= mr.doctor_profile&.name || "N/A" %></td>
+            <td><strong><%= mr.diagnosis %></strong></td>
+            <td><%= mr.description.to_s.truncate(40) %></td>
+            <td class="text-end">
+              <% if can? :read, mr %>
+                <%= link_to "Details", medical_record_path(mr), class: "btn btn-sm btn-info text-white me-1" %>
+              <% end %>
+              <% if can? :update, mr %>
+                <%= link_to "Edit", edit_medical_record_path(mr), class: "btn btn-sm btn-warning me-1" %>
+              <% end %>
+              <% if can? :destroy, mr %>
+                <%= button_to "Delete", medical_record_path(mr), 
+                              method: :delete, 
+                              class: "btn btn-sm btn-danger d-inline", 
+                              form: { style: "display:inline-block;" },
+                              data: { turbo_confirm: "Are you sure you want to delete this medical record?" } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="alert alert-info">
+      No medical records recorded yet. Click "New Medical Record" to add one.
+    </div>
+  <% end %>
+</div>

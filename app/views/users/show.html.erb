@@ -1,0 +1,44 @@
+
+<div class="container mt-4">
+
+  <!-- user Details Card -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+      <h3 class="mb-0"><%= @user.name %></h3>
+      <span class="badge bg-light text-primary fs-6">ID: #<%= @user.id %></span>
+    </div>
+
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-sm-3 text-muted">Role</div>
+        <div class="col-sm-9 fw-semibold"><%= @user.role.presence || "Not specified" %></div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-sm-3 text-muted">Email</div>
+        <div class="col-sm-9"><%= @user.email.presence || "Not specified" %></div>
+      </div>
+    </div>
+
+
+    <div class="card-footer bg-light d-flex justify-content-between">
+      <% if can? :manage, User %>
+        <%= link_to "Back to user List", staff_management_path, class: "btn btn-secondary" %>
+      <% end %>
+
+      <div class="d-flex gap-2">
+        <% if can? :update, @user %>
+          <%= link_to "Edit Details", edit_user_path(@user), class: "btn btn-warning" %>
+        <% end %>
+        <% if can? :destroy, @user %>
+          <%= button_to "Delete user", user_path(@user),
+                        method: :delete,
+                        class: "btn btn-danger",
+                        data: { turbo_confirm: "Are you sure you want to permanently delete #{@user.name}?" } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+</div>
+

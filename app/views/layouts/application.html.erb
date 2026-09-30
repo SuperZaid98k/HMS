@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Hms" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Hms">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @theme {
+      /* Add custom theme variables here if needed */
+      }
+
+      /* --- Layout & Grid Shims --- */
+        .container {
+          @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+        }
+        .row {
+          @apply flex flex-wrap -mx-2;
+        }
+        .col-sm-3 {
+          @apply w-full sm:w-1/4 px-2;
+        }
+        .col-sm-9 {
+          @apply w-full sm:w-3/4 px-2;
+        }
+
+        /* --- Flexbox & Spacing Shims --- */
+        .d-flex {
+          @apply flex;
+        }
+        .justify-content-between {
+          @apply justify-between;
+        }
+        .align-items-center {
+          @apply items-center;
+        }
+        .gap-2 {
+          @apply gap-2;
+        }
+        .mb-0 {
+          @apply mb-0;
+        }
+        .mb-3 {
+          @apply mb-3;
+        }
+        .mb-4 {
+          @apply mb-4;
+        }
+        .mt-4 {
+          @apply mt-6;
+        }
+        .py-3 {
+          @apply py-3;
+        }
+        .p-4 {
+          @apply p-6;
+        }
+        .mx-auto {
+          @apply mx-auto;
+        }
+
+        /* --- Typography & Text Shims --- */
+        .text-muted {
+          @apply text-gray-500 text-sm font-medium;
+        }
+        .fw-semibold {
+          @apply font-semibold text-gray-900 text-sm;
+        }
+        .fs-6 {
+          @apply text-xs font-semibold;
+        }
+
+        /* --- Cards --- */
+        .card {
+          @apply bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden;
+        }
+        .card-header {
+          @apply px-6 py-4 font-semibold text-lg border-b border-gray-200;
+        }
+        .card-body {
+          @apply p-6;
+        }
+        .card-footer {
+          @apply px-6 py-4 border-t border-gray-200 flex justify-between items-center;
+        }
+        .shadow-sm {
+          @apply shadow-sm;
+        }
+
+        /* --- Contextual Colors & Badges --- */
+        .bg-primary {
+          @apply bg-blue-600 text-white;
+        }
+        .bg-warning {
+          @apply bg-amber-500 text-white;
+        }
+        .bg-success {
+          @apply bg-green-500 text-white;
+        }
+        .bg-light {
+          @apply bg-gray-50 text-gray-700;
+        }
+        .text-white {
+          @apply text-white;
+        }
+        .text-dark {
+          @apply text-gray-900;
+        }
+        .text-primary {
+          @apply text-blue-600;
+        }
+        .badge {
+          @apply inline-flex items-center px-2.5 py-1 rounded-full;
+        }
+
+        /* --- Buttons --- */
+        .btn {
+          @apply inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-150 cursor-pointer text-sm;
+        }
+        .btn-primary {
+          @apply px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 shadow-sm;
+        }
+        .btn-secondary {
+          @apply px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300 shadow-sm;
+        }
+        .btn-warning {
+          @apply px-4 py-2 bg-amber-500 text-white hover:bg-amber-600 shadow-sm;
+        }
+        .btn-danger {
+          @apply px-4 py-2 bg-red-600 text-white hover:bg-red-700 shadow-sm;
+        }
+        .btn-outline-secondary {
+          @apply px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50;
+        }
+
+        /* --- Forms --- */
+        .form-label {
+          @apply block text-sm font-medium text-gray-700 mb-1.5;
+        }
+        .form-control {
+          @apply block w-full rounded-lg border border-gray-300 px-3.5 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none sm:text-sm;
+        }
+
+        /* --- Alerts --- */
+        .alert {
+          @apply rounded-lg p-4 mb-4 border text-sm font-medium;
+        }
+        .alert-danger {
+          @apply bg-red-50 border-red-200 text-red-800;
+        }
+        .alert-success {
+          @apply bg-green-50 border-green-200 text-green-800;
+        }
+        .alert-heading {
+          @apply font-bold mb-1.5 text-base;
+        }
+        /* --- Heading & Text Shims --- */
+        h1 {
+          @apply text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight;
+        }
+        .text-end {
+          @apply text-right;
+        }
+        .me-1 {
+          @apply mr-1.5;
+        }
+        .d-inline {
+          @apply inline-flex;
+        }
+
+        /* --- Buttons --- */
+        .btn-info {
+          @apply bg-sky-500 text-white hover:bg-sky-600 shadow-sm px-4 py-2 text-white shadow-sm;
+        }
+
+        /* --- Table Shims --- */
+        .table {
+          @apply min-w-full divide-y divide-gray-200 border-collapse mt-4 text-sm text-left shadow-sm rounded-lg overflow-hidden;
+        }
+        .table thead {
+          @apply border-b border-gray-200;
+        }
+        .table th {
+          @apply px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-700 bg-gray-100;
+        }
+        .table td {
+          @apply px-4 py-3.5 text-gray-700 border-b border-gray-100;
+        }
+        .table-dark {
+          @apply bg-gray-900 text-white border-none;
+        }
+        .table-dark th {
+          @apply bg-gray-900 text-gray-100 font-semibold border-none;
+        }
+        .table-striped tbody tr:nth-of-type(even) {
+          @apply bg-gray-50/70;
+        }
+        .table-hover tbody tr {
+          @apply hover:bg-blue-50/50 transition-colors duration-150;
+        }
+        .align-middle {
+          @apply align-middle;
+        }
+
+        /* --- Extra Alert Shims --- */
+        .alert-info {
+          @apply bg-blue-50 border-blue-200 text-blue-800;
+        }
+    </style>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <%= render "application/header"%>
+        <!-- Flash alerts only render when there is actual text -->
+        <% if notice.present? %>
+        <div class="container mt-4">
+          <div class="alert alert-success"><%= notice %></div>
+        </div>
+        <% end %>
+        
+        <% if alert.present? %>
+        <div class="container mt-4">
+          <div class="alert alert-danger"><%= alert %></div>
+        </div>
+      <% end %>
+    <%= yield %>
+    <%= render "application/footer"%>
+
+
+  </body>
+</html>

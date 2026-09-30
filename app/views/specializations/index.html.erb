@@ -1,0 +1,110 @@
+<%
+  spec_photos = [
+    "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80", # Cardiology
+    "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80", # Neurology
+    "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80", # Orthopedics
+    "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=800&q=80", # Diagnostics / Pathology
+    "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=800&q=80", # Surgery
+    "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80"  # Pediatrics
+  ]
+%>
+
+<div class="min-h-screen bg-slate-50 space-y-8 pb-16">
+  
+  <!-- Header Banner -->
+  <section class="bg-gradient-to-r from-teal-800 via-teal-700 to-cyan-800 text-white py-12 px-4 sm:px-6 lg:px-8 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-teal-100 text-xs font-semibold uppercase tracking-wider backdrop-blur-md mb-2">
+          🔬 Clinical Specialties
+        </span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">Medical Specializations & Treatments</h1>
+        <p class="text-teal-100 text-sm sm:text-base mt-1 max-w-2xl">
+          Discover specialized treatment disciplines, expert consultant doctors, and dedicated therapeutic clinical pathways.
+        </p>
+      </div>
+
+      <% if can? :create, Specialization %>
+        <%= link_to new_specialization_path, class: "inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-teal-900 font-bold text-xs hover:bg-teal-50 shadow-md transition transform hover:-translate-y-0.5" do %>
+          <span>+ Create Specialization</span>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Specializations Grid -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <% if @specializations.any? %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <% @specializations.each do |specialization| %>
+          <% photo = spec_photos[specialization.id % spec_photos.length] %>
+
+          <div class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:border-teal-500 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
+            <div>
+              <!-- Visual Image Header -->
+              <div class="relative w-full h-40 overflow-hidden bg-teal-50">
+                <img src="<%= photo %>" 
+                     alt="<%= specialization.name %>" 
+                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-black/20 to-transparent"></div>
+
+                <div class="absolute top-3 left-3">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/95 text-teal-900 shadow-sm backdrop-blur-sm">
+                    Center of Excellence
+                  </span>
+                </div>
+
+                <div class="absolute bottom-3 left-3 right-3 text-white">
+                  <h3 class="text-lg font-bold truncate leading-tight"><%= specialization.name %></h3>
+                </div>
+              </div>
+
+              <!-- Description & Doctor Count -->
+              <div class="p-5 space-y-3">
+                <p class="text-xs text-gray-600 line-clamp-3 leading-relaxed">
+                  <%= specialization.description.presence || "Comprehensive modern diagnosis, therapeutic programs, and certified specialist guidance." %>
+                </p>
+
+                <div class="pt-2 flex items-center gap-2 border-t border-gray-100">
+                  <span class="px-2 py-0.5 rounded-md bg-teal-50 text-teal-700 font-bold text-[11px] border border-teal-100">
+                    <%= specialization.doctor_profiles.size rescue 0 %> Specialists
+                  </span>
+                  <span class="text-[11px] text-gray-400">• Outpatient & Surgery</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="px-5 py-3 bg-slate-50 border-t border-gray-100 flex justify-between items-center text-xs">
+              <% if can? :read, specialization %>
+                <%= link_to specialization_path(specialization), class: "text-teal-700 hover:text-teal-800 font-bold flex items-center gap-1 group" do %>
+                  <span>View Doctors</span>
+                  <span class="group-hover:translate-x-1 transition-transform">→</span>
+                <% end %>
+              <% end %>
+
+              <div class="flex items-center gap-2">
+                <% if can? :update, specialization %>
+                  <%= link_to "Edit", edit_specialization_path(specialization), class: "text-amber-600 hover:underline font-semibold" %>
+                <% end %>
+                <% if can? :destroy, specialization %>
+                  <%= button_to "Delete", specialization_path(specialization), 
+                                method: :delete, 
+                                class: "text-red-600 hover:underline bg-transparent border-0 p-0 text-xs font-semibold cursor-pointer",
+                                data: { turbo_confirm: "Are you sure you want to delete #{specialization.name}?" } %>
+                <% end %>
+              </div>
+            </div>
+
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-12 text-center text-gray-500">
+        <p class="text-base font-semibold text-gray-700 mb-1">No specializations found.</p>
+        <p class="text-xs text-gray-400">Click "Create Specialization" above to register the first specialty.</p>
+      </div>
+    <% end %>
+  </div>
+
+</div>

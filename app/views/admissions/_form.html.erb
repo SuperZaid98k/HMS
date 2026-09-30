@@ -1,0 +1,42 @@
+<%= form_with(model: admission, class: "needs-validation") do |form| %>
+  <% if admission.errors.any? %>
+    <div class="alert alert-danger">
+      <h5 class="alert-heading"><%= pluralize(admission.errors.count, "error") %> prohibited this admission from being saved:</h5>
+      <ul class="mb-0">
+        <% admission.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :patient_id, "Select Patient", class: "form-label" %>
+    <%= form.collection_select :patient_id, Patient.all, :id, ->(p) { p.patient_profile ? "#{p.patient_profile.first_name} #{p.patient_profile.last_name} (#{p.patient_number})" : "Patient ##{p.patient_number}" }, { prompt: "-- Select Patient --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :bed_id, "Select Bed", class: "form-label" %>
+    <%= form.collection_select :bed_id, Bed.includes(room: :ward).all, :id, ->(b) { "Bed ##{b.bed_number} (Room #{b.room&.room_number}, Ward #{b.room&.ward&.name}) - [#{b.status}]" }, { prompt: "-- Select Bed --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :admitted_at, "Admission Date & Time", class: "form-label" %>
+    <%= form.text_field :admitted_at, class: "form-control", value: admission.admitted_at || Time.current.strftime("%Y-%m-%d %H:%M") %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :discharged_at, "Discharge Date & Time (If Discharged)", class: "form-label" %>
+    <%= form.text_field :discharged_at, class: "form-control", placeholder: "Leave empty if currently admitted" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :status, "Admission Status", class: "form-label" %>
+    <%= form.select :status, ["admitted", "discharged"], { prompt: "-- Select Status --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", admissions_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

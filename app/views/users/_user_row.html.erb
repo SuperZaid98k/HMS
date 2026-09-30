@@ -1,0 +1,66 @@
+<%
+  role_badge_class = case user.role.to_s.downcase
+  when "admin"   then "bg-purple-50 text-purple-700 border-purple-200"
+  when "doctor"  then "bg-cyan-50 text-cyan-700 border-cyan-200"
+  when "staff"   then "bg-amber-50 text-amber-700 border-amber-200"
+  when "patient" then "bg-teal-50 text-teal-700 border-teal-200"
+  else "bg-slate-50 text-slate-700 border-slate-200"
+  end
+
+  user_initials = (user.name.presence || user.email).first(2).upcase
+%>
+
+<tr class="hover:bg-teal-50/40 transition group" id="<%= dom_id(user) %>">
+  <!-- ID Token -->
+  <td class="py-4 px-6 font-mono font-bold text-teal-800 text-xs">
+    <div class="flex items-center gap-2">
+      <span class="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center font-bold border border-teal-100">
+        <%= user_initials %>
+      </span>
+      <span>#<%= user.id %></span>
+    </div>
+  </td>
+
+  <!-- Name -->
+  <td class="py-4 px-6">
+    <div class="font-bold text-slate-900 leading-tight">
+      <%= user.name.presence || "Anonymous User" %>
+    </div>
+  </td>
+
+  <!-- Role Badge -->
+  <td class="py-4 px-6">
+    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border <%= role_badge_class %>">
+      ● <%= user.role.presence || "Patient" %>
+    </span>
+  </td>
+
+  <!-- Email -->
+  <td class="py-4 px-6 text-xs text-slate-600">
+    <a href="mailto:<%= user.email %>" class="hover:text-teal-700 hover:underline">
+      <%= user.email %>
+    </a>
+  </td>
+
+  <!-- Actions -->
+  <td class="py-4 px-6 text-right whitespace-nowrap">
+    <div class="flex items-center justify-end gap-2 text-xs">
+      <% if can? :read, user %>
+        <%= link_to "Details", user_path(user), 
+              class: "px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white font-semibold transition border border-teal-200" %>
+      <% end %>
+
+      <% if can? :update, user %>
+        <%= link_to "Edit", edit_user_path(user), 
+              class: "text-amber-600 hover:text-amber-700 font-medium hover:underline px-1" %>
+      <% end %>
+
+      <% if can? :destroy, user %>
+        <%= button_to "Delete", user_path(user), 
+              method: :delete, 
+              class: "text-red-600 hover:text-red-700 font-medium hover:underline bg-transparent border-0 p-0 text-xs cursor-pointer",
+              data: { turbo_confirm: "Are you sure you want to delete #{user.name}?" } %>
+      <% end %>
+    </div>
+  </td>
+</tr>

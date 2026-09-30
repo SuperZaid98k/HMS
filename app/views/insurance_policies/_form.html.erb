@@ -1,0 +1,48 @@
+<%= form_with(model: insurance_policy, class: "needs-validation") do |form| %>
+  <% if insurance_policy.errors.any? %>
+    <div class="alert alert-danger">
+      <h5 class="alert-heading"><%= pluralize(insurance_policy.errors.count, "error") %> prohibited this policy from being saved:</h5>
+      <ul class="mb-0">
+        <% insurance_policy.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :patient_id, "Select Patient", class: "form-label" %>
+    <%= form.collection_select :patient_id, Patient.all, :id, ->(p) { p.patient_profile ? "#{p.patient_profile.first_name} #{p.patient_profile.last_name} (#{p.patient_number})" : "Patient ##{p.patient_number}" }, { prompt: "-- Select Patient --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :provider_name, "Insurance Provider Name", class: "form-label" %>
+    <%= form.text_field :provider_name, class: "form-control", placeholder: "e.g. Star Health, BlueCross" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :policy_number, "Policy Number", class: "form-label" %>
+    <%= form.text_field :policy_number, class: "form-control", placeholder: "e.g. POL-998877" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :coverage_amount, "Coverage Amount ($)", class: "form-label" %>
+    <%= form.text_field :coverage_amount, class: "form-control", placeholder: "e.g. 50000" %>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6 mb-3">
+      <%= form.label :valid_from, "Valid From", class: "form-label" %>
+      <%= form.date_field :valid_from, class: "form-control" %>
+    </div>
+    <div class="col-sm-6 mb-3">
+      <%= form.label :valid_until, "Valid Until", class: "form-label" %>
+      <%= form.date_field :valid_until, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", insurance_policies_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

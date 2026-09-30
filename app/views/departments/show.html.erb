@@ -1,0 +1,28 @@
+<div class="container mt-4">
+
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+      <h3 class="mb-0"><%= @department.name %></h3>
+      <span class="badge bg-light text-primary fs-6">ID: #<%= @department.id %></span>
+    </div>
+
+    <div class="card-footer bg-light d-flex justify-content-between">
+      <% if can? :read, @hospital %>
+        <%= link_to "Back to department List", hospital_path(@hospital), class: "btn btn-secondary" %>
+      <% end %>
+
+      <div class="d-flex gap-2">
+        <% if can? :update, @department %>
+          <%= link_to "Edit Details", edit_hospital_department_path(@hospital, @department), class: "btn btn-warning" %>
+        <% end %>
+        <% if can? :destroy, @department %>
+          <%= button_to "Delete department", hospital_department_path(@hospital, @department),
+                        method: :delete,
+                        class: "btn btn-danger",
+                        data: { turbo_confirm: "Are you sure you want to permanently delete #{@department.name}?" } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

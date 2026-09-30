@@ -1,0 +1,354 @@
+<%
+  doctor_photos = [
+    "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=600&q=80",
+    "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80",
+    "https://i.pravatar.cc/300?img=24",
+    "https://i.pravatar.cc/300?img=5",
+    "https://i.pravatar.cc/300?img=36",
+    "https://i.pravatar.cc/300?img=13",
+    "https://i.pravatar.cc/300?img=41",
+    "https://i.pravatar.cc/300?img=18",
+    "https://i.pravatar.cc/300?img=9",
+    "https://i.pravatar.cc/300?img=29",
+    "https://i.pravatar.cc/300?img=1",
+    "https://i.pravatar.cc/300?img=34",
+    "https://i.pravatar.cc/300?img=15",
+    "https://i.pravatar.cc/300?img=22",
+    "https://i.pravatar.cc/300?img=3",
+    "https://i.pravatar.cc/300?img=38",
+    "https://i.pravatar.cc/300?img=27",
+    "https://i.pravatar.cc/300?img=10",
+    "https://i.pravatar.cc/300?img=31",
+    "https://i.pravatar.cc/300?img=17",
+    "https://i.pravatar.cc/300?img=26",
+    "https://i.pravatar.cc/300?img=8",
+    "https://i.pravatar.cc/300?img=40",
+    "https://i.pravatar.cc/300?img=19",
+    "https://i.pravatar.cc/300?img=12",
+    "https://i.pravatar.cc/300?img=33",
+    "https://i.pravatar.cc/300?img=20",
+    "https://i.pravatar.cc/300?img=23",
+    "https://i.pravatar.cc/300?img=6",
+    "https://i.pravatar.cc/300?img=28",
+    "https://i.pravatar.cc/300?img=11",
+    "https://i.pravatar.cc/300?img=30",
+    "https://i.pravatar.cc/300?img=25",
+    "https://i.pravatar.cc/300?img=16",
+    "https://i.pravatar.cc/300?img=14",
+    "https://i.pravatar.cc/300?img=35",
+    "https://i.pravatar.cc/300?img=32",
+    "https://i.pravatar.cc/300?img=21"
+  ]
+%>
+
+<div class="min-h-screen bg-slate-50 space-y-10 pb-20">
+
+  <!-- ================= 1. HOSPITAL OVERVIEW HERO ================= -->
+  <section class="bg-gradient-to-r from-teal-800 via-teal-700 to-cyan-800 text-white pt-10 pb-14 px-4 sm:px-6 lg:px-8 shadow-md">
+    <div class="max-w-7xl mx-auto space-y-6">
+      
+      <!-- Top Bar: Back & Admin Actions -->
+      <div class="flex flex-wrap justify-between items-center gap-3">
+        <%= link_to hospitals_path, class: "inline-flex items-center gap-1.5 text-xs font-semibold text-teal-100 hover:text-white transition" do %>
+          <span>← Back to All Hospitals</span>
+        <% end %>
+
+        <div class="flex items-center gap-2">
+          <% if can? :update, @hospital %>
+            <%= link_to "Edit Hospital", edit_hospital_path(@hospital), class: "px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-900 text-xs font-bold transition shadow-sm" %>
+          <% end %>
+          <% if can? :destroy, @hospital %>
+            <%= button_to "Delete Hospital", hospital_path(@hospital),
+                          method: :delete,
+                          class: "px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition shadow-sm cursor-pointer",
+                          data: { turbo_confirm: "Permanently delete #{@hospital.name}?" } %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Main Hospital Card Content -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-8 space-y-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-sm border border-white/30">
+              Registration No: <%= @hospital.registration_number.presence || "REG-#{1000 + @hospital.id}" %>
+            </span>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500 text-white">
+              Verified Healthcare Facility
+            </span>
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+            <%= @hospital.name %>
+          </h1>
+
+          <p class="text-teal-100 text-sm max-w-2xl leading-relaxed flex items-start gap-2">
+            <span class="text-base">📍</span>
+            <span><%= @hospital.address.presence || "Central Medical District, Main Hospital Campus" %></span>
+          </p>
+        </div>
+
+        <!-- Quick Contacts Capsule -->
+        <div class="lg:col-span-4 bg-teal-900/60 backdrop-blur-md rounded-2xl p-5 border border-teal-600/50 space-y-3 text-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-teal-800 text-teal-200 flex items-center justify-center font-bold">📞</div>
+            <div>
+              <span class="text-teal-300 block uppercase text-[10px] font-bold">Helpline & Reception</span>
+              <span class="text-white font-semibold text-sm"><%= @hospital.phone.presence || "+91 (0712) 280-4500" %></span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 border-t border-teal-700/60 pt-3">
+            <div class="w-8 h-8 rounded-lg bg-teal-800 text-teal-200 flex items-center justify-center font-bold">✉️</div>
+            <div>
+              <span class="text-teal-300 block uppercase text-[10px] font-bold">Official Inquiries</span>
+              <span class="text-white font-semibold"><%= @hospital.email.presence || "care@hmshospital.org" %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= MAIN CONTENT CONTAINER ================= -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+
+    <!-- ================= 2. DEPARTMENTS SECTION ================= -->
+    <section class="space-y-4">
+      <div class="flex justify-between items-center border-b border-gray-200 pb-3">
+        <div>
+          <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <span class="w-2 h-5 rounded-full bg-teal-600 inline-block"></span>
+            Clinical Departments (<%= @hospital.departments.size %>)
+          </h3>
+          <p class="text-xs text-gray-500 mt-0.5">Specialized outpatient and diagnostic divisions operating in this facility</p>
+        </div>
+
+        <% if can? :create, Department %>
+          <%= link_to new_hospital_department_path(@hospital), class: "btn btn-sm btn-primary" do %>
+            + Add Department
+          <% end %>
+        <% end %>
+      </div>
+
+      <% if @hospital.departments.any? %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <% @hospital.departments.each do |department| %>
+            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:border-teal-500 hover:shadow-md transition flex flex-col justify-between">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-lg font-bold">
+                    🏛️
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-gray-900 text-sm"><%= department.name %></h4>
+                    <span class="text-[11px] text-gray-400">Campus Division</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center text-xs">
+                <% if can? :read, department %>
+                  <%= link_to "View Details →", hospital_department_path(@hospital, department), class: "text-teal-700 hover:text-teal-800 font-bold" %>
+                <% end %>
+
+                <div class="flex gap-2">
+                  <% if can? :update, department %>
+                    <%= link_to "Edit", edit_hospital_department_path(@hospital, department), class: "text-amber-600 hover:underline font-semibold" %>
+                  <% end %>
+                  <% if can? :destroy, department %>
+                    <%= button_to "Delete", hospital_department_path(@hospital, department),
+                                  method: :delete,
+                                  class: "text-red-600 hover:underline bg-transparent border-0 p-0 text-xs font-semibold cursor-pointer",
+                                  data: { turbo_confirm: "Delete #{department.name}?" } %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-8 text-center text-gray-500 text-xs">
+          No departments listed for this hospital yet.
+        </div>
+      <% end %>
+    </section>
+
+    <!-- ================= 3. INPATIENT WARDS SECTION ================= -->
+    <section class="space-y-4">
+      <div class="flex justify-between items-center border-b border-gray-200 pb-3">
+        <div>
+          <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <span class="w-2 h-5 rounded-full bg-cyan-600 inline-block"></span>
+            Inpatient Wards & Care Units (<%= @hospital.wards.size %>)
+          </h3>
+          <p class="text-xs text-gray-500 mt-0.5">ICU, surgery recovery, private suites, and general wards</p>
+        </div>
+
+        <% if can? :create, Ward %>
+          <%= link_to new_hospital_ward_path(@hospital), class: "btn btn-sm btn-primary" do %>
+            + Add Ward
+          <% end %>
+        <% end %>
+      </div>
+
+      <% if @hospital.wards.any? %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <% @hospital.wards.each do |ward| %>
+            <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:border-cyan-500 hover:shadow-md transition flex flex-col justify-between">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center text-lg font-bold">
+                    🛏️
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-gray-900 text-sm"><%= ward.name %></h4>
+                    <span class="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 uppercase">
+                      <%= ward.ward_type.presence || "General Ward" %>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Shallow Routes actions: ward_path and edit_ward_path -->
+              <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center text-xs">
+                <% if can? :read, ward %>
+                  <%= link_to "Ward Details →", ward_path(ward), class: "text-cyan-700 hover:text-cyan-800 font-bold" %>
+                <% end %>
+
+                <div class="flex gap-2">
+                  <% if can? :update, ward %>
+                    <%= link_to "Edit", edit_ward_path(ward), class: "text-amber-600 hover:underline font-semibold" %>
+                  <% end %>
+                  <% if can? :destroy, ward %>
+                    <%= button_to "Delete", ward_path(ward),
+                                  method: :delete,
+                                  class: "text-red-600 hover:underline bg-transparent border-0 p-0 text-xs font-semibold cursor-pointer",
+                                  data: { turbo_confirm: "Delete #{ward.name}?" } %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-8 text-center text-gray-500 text-xs">
+          No inpatient wards added to this hospital yet.
+        </div>
+      <% end %>
+    </section>
+
+    <!-- ================= 4. ATTENDING DOCTORS SECTION ================= -->
+    <section class="space-y-4">
+      <div class="flex justify-between items-center border-b border-gray-200 pb-3">
+        <div>
+          <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <span class="w-2 h-5 rounded-full bg-emerald-600 inline-block"></span>
+            Specialists Practicing at this Center (<%= @hospital.doctor_profiles.size %>)
+          </h3>
+          <p class="text-xs text-gray-500 mt-0.5">Verified clinicians holding OPD consultations at <%= @hospital.name %></p>
+        </div>
+
+        <% if can? :create, DoctorProfile %>
+          <%= link_to new_doctor_profile_path, class: "btn btn-sm btn-primary" do %>
+            + Add Doctor
+          <% end %>
+        <% end %>
+      </div>
+
+      <% if @hospital.doctor_profiles.any? %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <% @hospital.doctor_profiles.each do |doctor| %>
+            <% doc_img = doctor_photos[doctor.id % doctor_photos.length] %>
+
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:border-teal-500 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
+              <div class="p-5">
+                <!-- Doctor Image Container -->
+                <div class="relative w-full h-44 rounded-xl overflow-hidden mb-4 bg-slate-100">
+                  <img src="<%= doc_img %>" 
+                       alt="Dr. <%= doctor.name %>" 
+                       class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+
+                  <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 text-white shadow-sm">
+                    Available
+                  </span>
+
+                  <% if doctor.experience_years.present? %>
+                    <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/95 text-teal-800 shadow-sm">
+                      <%= doctor.experience_years %>+ yrs
+                    </span>
+                  <% end %>
+                </div>
+
+                <!-- Doctor Details -->
+                <h4 class="text-base font-bold text-gray-900 group-hover:text-teal-600 transition truncate">
+                  Dr. <%= doctor.name.presence || doctor.user&.name || "Medical Specialist" %>
+                </h4>
+
+                <p class="text-xs font-semibold text-teal-700 mt-0.5">
+                  <%= doctor.department&.name || "Specialist Department" %>
+                </p>
+
+                <!-- Specialization Badges -->
+                <div class="mt-3 flex flex-wrap gap-1">
+                  <% if doctor.specializations.any? %>
+                    <% doctor.specializations.take(2).each do |spec| %>
+                      <span class="px-2 py-0.5 text-[10px] rounded-md bg-teal-50 text-teal-700 font-medium border border-teal-100">
+                        <%= spec.name %>
+                      </span>
+                    <% end %>
+                  <% else %>
+                    <span class="px-2 py-0.5 text-[10px] rounded-md bg-slate-100 text-slate-500">Consultant</span>
+                  <% end %>
+                </div>
+              </div>
+
+              <!-- Footer Booking & Management Actions -->
+              <div class="p-4 bg-slate-50 border-t border-gray-100 flex flex-col gap-2">
+                <% if user_signed_in? %>
+                  <%= link_to "Book Appointment", 
+                              new_appointment_path(doctor_profile_id: doctor.id), 
+                              class: "w-full py-2 px-3 text-center text-xs font-bold rounded-xl bg-teal-600 hover:bg-teal-700 text-white shadow-sm transition" %>
+                <% else %>
+                  <%= link_to "Book Appointment", 
+                              new_user_session_path, 
+                              class: "w-full py-2 px-3 text-center text-xs font-bold rounded-xl bg-teal-600 hover:bg-teal-700 text-white shadow-sm transition" %>
+                <% end %>
+
+                <div class="flex justify-between items-center text-xs pt-1">
+                  <% if can? :read, doctor %>
+                    <%= link_to "Profile", doctor_profile_path(doctor), class: "text-slate-600 hover:text-teal-600 font-semibold" %>
+                  <% end %>
+
+                  <div class="flex gap-2">
+                    <% if can? :update, doctor %>
+                      <%= link_to "Edit", edit_doctor_profile_path(doctor), class: "text-amber-600 hover:underline font-medium" %>
+                    <% end %>
+                    <% if can? :destroy, doctor %>
+                      <%= button_to "Delete", doctor_profile_path(doctor), 
+                                    method: :delete, 
+                                    class: "text-red-600 hover:underline bg-transparent border-0 p-0 text-xs font-medium cursor-pointer",
+                                    data: { turbo_confirm: "Delete this doctor profile?" } %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-8 text-center text-gray-500 text-xs">
+          No doctor profiles currently assigned to this hospital.
+        </div>
+      <% end %>
+    </section>
+
+  </div>
+</div>

@@ -1,0 +1,82 @@
+<%= form_with(model: contact_message, url: contact_us_path, class: "space-y-5") do |form| %>
+
+  <% if contact_message.errors.any? %>
+    <div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+      <div class="flex items-center gap-2 font-semibold mb-1">
+        <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span><%= pluralize(contact_message.errors.count, "error") %> prevented submission:</span>
+      </div>
+      <ul class="list-disc list-inside space-y-1 text-xs">
+        <% contact_message.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Name Field -->
+  <div>
+    <%= form.label :name, class: "block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5" do %>
+      Full Name <span class="text-red-500">*</span>
+    <% end %>
+    <div class="relative">
+      <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+        👤
+      </div>
+      <%= form.text_field :name, placeholder: "e.g. Dr. / Mr. / Ms. Rahul Sharma", required: true,
+            class: "w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm transition" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <!-- Contact Number Field -->
+    <div>
+      <%= form.label :contact_no, class: "block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5" do %>
+        Phone Number <span class="text-red-500">*</span>
+      <% end %>
+      <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+          📞
+        </div>
+        <%= form.telephone_field :contact_no, placeholder: "+91 98765 43210", required: true,
+              class: "w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm transition" %>
+      </div>
+    </div>
+
+    <!-- Email Field -->
+    <div>
+      <%= form.label :email, class: "block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5" do %>
+        Email Address <span class="text-red-500">*</span>
+      <% end %>
+      <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+          ✉️
+        </div>
+        <%= form.email_field :email, placeholder: "rahul.sharma@example.com", required: true,
+              class: "w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm transition" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Field -->
+  <div>
+    <%= form.label :message, class: "block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5" do %>
+      Message / Clinical Concern <span class="text-gray-400 font-normal normal-case">(Optional)</span>
+    <% end %>
+    <%= form.text_area :message, rows: 4, 
+          placeholder: "Describe your medical requirement, preferred doctor/specialty, or any specific inquiry...", 
+          class: "w-full p-3.5 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm transition" %>
+  </div>
+
+  <!-- Submit CTA & Privacy Guarantee -->
+  <div class="pt-2 space-y-3">
+    <%= form.submit "Submit Inquiry", 
+          class: "w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition cursor-pointer text-sm transform hover:-translate-y-0.5" %>
+
+    <p class="text-[11px] text-gray-400 text-center flex items-center justify-center gap-1">
+      <svg class="w-3.5 h-3.5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+      <span>Your personal & clinical data is protected under patient confidentiality standards.</span>
+    </p>
+  </div>
+
+<% end %>

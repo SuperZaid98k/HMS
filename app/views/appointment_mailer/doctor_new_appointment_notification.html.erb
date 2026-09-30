@@ -1,0 +1,70 @@
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; font-family: Arial, Helvetica, sans-serif; margin: 20px auto; color: #334155;">
+  
+  <!-- Header -->
+  <tr>
+    <td style="background-color: #0f766e; padding: 24px 32px; text-align: center;">
+      <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: bold;">HMS Healthcare</h1>
+      <p style="color: #99f6e4; margin: 4px 0 0 0; font-size: 13px;">Clinical OPD Schedule Notification</p>
+    </td>
+  </tr>
+
+  <!-- Body -->
+  <tr>
+    <td style="padding: 32px;">
+      <h2 style="font-size: 18px; color: #0f172a; margin-top: 0;">
+        Hello, Dr. <%= @doctor.name.presence || @doctor.user&.name %>!
+      </h2>
+      <p style="font-size: 14px; line-height: 1.6; color: #475569;">
+        A new clinical consultation has been booked on your OPD schedule. Here are the appointment details:
+      </p>
+
+      <!-- Details Summary Card -->
+      <table width="100%" cellpadding="10" cellspacing="0" style="background-color: #f0fdfa; border-radius: 8px; border: 1px solid #ccfbf1; margin: 20px 0; font-size: 13px;">
+        <tr>
+          <td style="font-weight: bold; color: #0f766e; width: 35%;">Appointment Token:</td>
+          <td style="color: #0f172a; font-family: monospace; font-weight: bold;">#<%= @appointment.id %></td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; color: #0f766e;">Patient Name:</td>
+          <td style="color: #0f172a; font-weight: bold;">
+            <%= @patient_profile ? "#{@patient_profile.first_name} #{@patient_profile.last_name}" : "Patient ##{@patient.id}" %>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; color: #0f766e;">Scheduled Date & Time:</td>
+          <td style="color: #0f172a; font-weight: bold;">
+            <%= @appointment.scheduled_at&.strftime("%B %d, %Y at %I:%M %p") || "To be confirmed" %>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; color: #0f766e;">Patient Contact:</td>
+          <td style="color: #0f172a;"><%= @patient_profile&.phone || "Not provided" %></td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; color: #0f766e;">Blood Group:</td>
+          <td style="color: #e11d48; font-weight: bold;"><%= @patient_profile&.blood_group.presence || "Not recorded" %></td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; color: #0f766e;">Reason / Symptoms:</td>
+          <td style="color: #0f172a;"><%= @appointment.reason.presence || "General consultation" %></td>
+        </tr>
+      </table>
+
+      <!-- CTA Button -->
+      <div style="text-align: center; margin-top: 28px;">
+        <a href="<%= appointment_url(@appointment) %>" 
+           style="background-color: #0f766e; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px; display: inline-block;">
+          View Appointment & Electronic Chart
+        </a>
+      </div>
+    </td>
+  </tr>
+
+  <!-- Footer -->
+  <tr>
+    <td style="background-color: #f8fafc; padding: 16px 32px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+      HMS Hospital Central OPD Management System &bull; Confidential Clinical Notification
+    </td>
+  </tr>
+
+</table>

@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  medical_record_id: 1
+  treatment_id: 1
+  notes: MyString
+  started_at: MyString
+  completed_at: MyString
+
+two:
+  medical_record_id: 1
+  treatment_id: 1
+  notes: MyString
+  started_at: MyString
+  completed_at: MyString

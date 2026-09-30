@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  department_id: 1
+  license_number: MyString
+  experience_years: MyString
+  mentor_id: 1
+
+two:
+  user_id: 1
+  department_id: 1
+  license_number: MyString
+  experience_years: MyString
+  mentor_id: 1

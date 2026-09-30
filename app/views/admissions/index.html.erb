@@ -1,0 +1,69 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Patient Admissions</h1>
+    <% if can? :create, Admission %>
+      <%= link_to "New Admission", new_admission_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+
+
+  <% if @admissions.any? %>
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Patient</th>
+          <th>Ward & Room</th>
+          <th>Bed No.</th>
+          <th>Admitted At</th>
+          <th>Discharged At</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @admissions.each do |adm| %>
+          <tr>
+            <td><%= adm.id %></td>
+            <td>
+              <% if adm.patient&.patient_profile %>
+                <%= link_to "#{adm.patient.patient_profile.first_name} #{adm.patient.patient_profile.last_name}", patient_path(adm.patient) %>
+              <% else %>
+                Patient #<%= adm.patient_id %>
+              <% end %>
+            </td>
+            <td><%= adm.bed&.room&.ward ? "#{adm.bed.room.ward.name} - Room #{adm.bed.room.room_number}" : "-" %></td>
+            <td><strong>Bed #<%= adm.bed&.bed_number || "Unassigned" %></strong></td>
+            <td><%= adm.admitted_at %></td>
+            <td><%= adm.discharged_at || "-" %></td>
+            <td>
+              <span class="badge <%= adm.status == 'admitted' ? 'bg-primary' : 'bg-secondary' %>">
+                <%= adm.status %>
+              </span>
+            </td>
+            <td class="text-end">
+              <% if can? :read, adm %>
+                <%= link_to "Details", admission_path(adm), class: "btn btn-sm btn-info text-white me-1" %>
+              <% end %>
+              <% if can? :update, adm %>
+                <%= link_to "Edit", edit_admission_path(adm), class: "btn btn-sm btn-warning me-1" %>
+              <% end %>
+              <% if can? :destroy, adm %>
+                <%= button_to "Delete", admission_path(adm), 
+                              method: :delete, 
+                              class: "btn btn-sm btn-danger d-inline", 
+                              form: { style: "display:inline-block;" },
+                              data: { turbo_confirm: "Are you sure you want to delete this admission record?" } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="alert alert-info">
+      No admissions recorded yet. Click "New Admission" to admit a patient.
+    </div>
+  <% end %>
+</div>

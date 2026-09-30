@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body style="font-family: Arial, Helvetica, sans-serif; background-color: #f8fafc; margin: 0; padding: 24px; color: #334155;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+      
+      <tr>
+        <td style="background-color: #0f766e; padding: 24px 32px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: bold;">HMS Healthcare</h1>
+          <p style="color: #99f6e4; margin: 4px 0 0 0; font-size: 13px;">Help Desk & Patient Assistance</p>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="padding: 32px;">
+          <h2 style="font-size: 18px; color: #0f172a; margin-top: 0;">Dear <%= @contact_message.name %>,</h2>
+          <p style="font-size: 14px; line-height: 1.6; color: #475569;">
+            Thank you for reaching out to HMS Healthcare. We have received your inquiry and our support team is reviewing your message.
+          </p>
+
+          <!-- Inquiry Copy -->
+          <div style="background-color: #f8fafc; border-left: 4px solid #0f766e; padding: 14px; margin: 20px 0; border-radius: 4px; font-size: 13px; color: #334155;">
+            <strong>Your Message:</strong><br />
+            <p style="margin: 6px 0 0 0; font-style: italic;"><%= @contact_message.message.presence || "Contact request with phone number #{@contact_message.contact_no}" %></p>
+          </div>
+
+          <p style="font-size: 14px; color: #475569;">
+            Our medical coordinators usually respond within <strong>24 business hours</strong>. For emergency care, please call our 24/7 hotline directly at <strong>+91 (0712) 280-4500</strong>.
+          </p>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="background-color: #f1f5f9; padding: 16px 32px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+          HMS Healthcare &bull; Central Medical District
+        </td>
+      </tr>
+
+    </table>
+  </body>
+</html>

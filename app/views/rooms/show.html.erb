@@ -1,0 +1,86 @@
+
+<div class="container mt-4">
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
+      <h2 class="mb-0"><%= @room.room_type %></h2>
+      <h5 class="mb-0">Room No.: <%= @room.room_number %></h5>
+      <span class="badge bg-light text-primary fs-6">ID: #<%= @room.id %></span>
+    </div>
+
+    <div class="card-footer bg-light d-flex justify-content-between">
+      <% if can? :read, @ward %>
+        <%= link_to "Back to room List", ward_path(@ward), class: "btn btn-secondary" %>
+      <% end %>
+
+      <div class="d-flex gap-2">
+        <% if can? :update, @room %>
+          <%= link_to "Edit Details", edit_room_path(@room), class: "btn btn-warning" %>
+        <% end %>
+        <% if can? :destroy, @room %>
+          <%= button_to "Delete room", room_path(@room),
+                        method: :delete,
+                        class: "btn btn-danger",
+                        data: { turbo_confirm: "Are you sure you want to permanently delete #{@room.room_number}?" } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- beds List -->
+  <div class="card shadow-sm mt-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+      <h4 class="mb-0">Beds</h4>
+      <% if can? :create, Bed %>
+        <%= link_to "+ Add bed", new_room_bed_path(@room), class: "btn btn-sm btn-primary" %>
+      <% end %>
+    </div>
+
+    <div class="card-body p-0">
+      <% if @room.beds.any? %>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>room</th>
+                <th>bed No.</th>
+                <th>bed Type</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @room.beds.each do |bed| %>
+                <tr>
+                  <td><%= @room.room_number %></td>
+                  <td class="fw-semibold"><%= bed.bed_number %></td>
+                  <td class="fw-semibold"><%= bed.status %></td>
+                  <td class="text-end">
+                    <% if can? :read, bed %>
+                      <%= link_to "View", bed_path(bed), class: "btn btn-sm btn-outline-info me-1" %>
+                    <% end %>
+                    <% if can? :update, bed %>
+                      <%= link_to "Edit", edit_bed_path(bed), class: "btn btn-sm btn-outline-warning me-1" %>
+                    <% end %>
+                    <% if can? :destroy, bed %>
+                      <%= button_to "Delete", bed_path(bed),
+                                    method: :delete,
+                                    class: "btn btn-sm btn-outline-danger d-inline",
+                                    form: { style: "display:inline-block;" },
+                                    data: { turbo_confirm: "Are you sure you want to delete bed #{bed.bed_number}?" } %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="p-4 text-center text-muted">
+          No beds added yet. Click <strong>+ Add bed</strong> to add one.
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

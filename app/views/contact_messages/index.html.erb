@@ -1,0 +1,280 @@
+<%
+  pending_requests_count = @hospital_requests.count { |r| r.status == "pending" }
+%>
+
+<div class="min-h-screen bg-slate-50 py-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+    <!-- 1. Header Banner -->
+    <div class="bg-gradient-to-r from-teal-800 via-teal-700 to-cyan-800 rounded-3xl p-6 sm:p-10 text-white shadow-lg relative overflow-hidden">
+      <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/15 text-teal-100 border border-white/20 uppercase tracking-wider mb-3">
+            Inquiries & Partner Onboarding
+          </span>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+            Communications Center
+          </h1>
+          <p class="text-teal-100 text-sm sm:text-base mt-1 max-w-xl">
+            Review general patient feedback, contact messages, and institution registration requests.
+          </p>
+        </div>
+
+        <!-- Quick Counters -->
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2.5 rounded-2xl text-xs">
+            <span class="text-teal-200 block text-[10px] uppercase font-bold">Pending Hospital Applications</span>
+            <span class="text-white font-extrabold text-base"><%= pending_requests_count %> Actionable</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Dual Tab Switcher -->
+    <div class="flex border-b border-gray-200 gap-4">
+      <button type="button" 
+              id="tab-btn-hospitals"
+              class="tab-trigger pb-4 px-2 text-sm font-bold text-teal-600 border-b-2 border-teal-600 flex items-center gap-2 focus:outline-none transition">
+        <span>🏥 Hospital Requests</span>
+        <span class="px-2 py-0.5 rounded-full text-xs bg-teal-100 text-teal-800 font-extrabold"><%= @hospital_requests.size %></span>
+      </button>
+
+      <button type="button" 
+              id="tab-btn-inquiries"
+              class="tab-trigger pb-4 px-2 text-sm font-semibold text-gray-500 hover:text-gray-700 border-b-2 border-transparent flex items-center gap-2 focus:outline-none transition">
+        <span>✉️ Patient Inquiries</span>
+        <span class="px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-600 font-extrabold"><%= @contact_messages.size %></span>
+      </button>
+    </div>
+
+    <!-- ================= TAB 1: HOSPITAL ONBOARDING REQUESTS ================= -->
+    <div id="tab-content-hospitals" class="space-y-6">
+      
+      <% if @hospital_requests.present? %>
+        <div class="bg-white rounded-3xl border border-gray-200/90 shadow-sm overflow-hidden">
+          <div class="p-6 border-b border-gray-100 bg-slate-50/50 flex justify-between items-center">
+            <div>
+              <h2 class="text-base font-bold text-gray-900">Hospital Partnership Applications</h2>
+              <p class="text-xs text-gray-500">Institutions requesting integration into the central directory</p>
+            </div>
+            <span class="text-xs font-semibold text-teal-700 font-mono">
+              <%= @hospital_requests.size %> Total Applications
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-slate-50 border-b border-gray-200/80 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  <th class="py-4 px-6">ID</th>
+                  <th class="py-4 px-6">Hospital & Location</th>
+                  <th class="py-4 px-6">Contact Representative</th>
+                  <th class="py-4 px-6">Facility Specs</th>
+                  <th class="py-4 px-6">Status</th>
+                  <th class="py-4 px-6">Received On</th>
+                  <th class="py-4 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                <% @hospital_requests.each do |req| %>
+                  <%
+                    status_badge = case req.status.to_s.downcase
+                    when "approved" then "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    when "rejected" then "bg-rose-50 text-rose-700 border-rose-200"
+                    when "under_review" then "bg-blue-50 text-blue-700 border-blue-200"
+                    else "bg-amber-50 text-amber-700 border-amber-200"
+                    end
+                  %>
+                  <tr class="hover:bg-teal-50/40 transition">
+                    <!-- Token -->
+                    <td class="py-4 px-6 font-mono font-bold text-teal-800 text-xs">
+                      #<%= req.id %>
+                    </td>
+
+                    <!-- Hospital Name & City -->
+                    <td class="py-4 px-6">
+                      <div class="font-bold text-slate-900"><%= req.hospital_name %></div>
+                      <div class="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                        <span>📍</span>
+                        <span><%= req.city %>, <%= req.state %></span>
+                      </div>
+                    </td>
+
+                    <!-- Contact Person -->
+                    <td class="py-4 px-6 text-xs">
+                      <div class="font-semibold text-slate-800"><%= req.contact_person_name %></div>
+                      <div class="text-gray-500">
+                        <a href="mailto:<%= req.email %>" class="text-teal-600 hover:underline"><%= req.email %></a>
+                      </div>
+                      <div class="text-gray-400 font-mono"><%= req.phone %></div>
+                    </td>
+
+                    <!-- Facility Specs -->
+                    <td class="py-4 px-6 text-xs">
+                      <span class="font-semibold text-slate-700"><%= req.total_beds.presence || "N/A" %> Beds</span>
+                      <p class="text-[11px] text-gray-500 truncate max-w-xs" title="<%= req.specialties %>">
+                        <%= req.specialties.presence || "General Departments" %>
+                      </p>
+                    </td>
+
+                    <!-- Status -->
+                    <td class="py-4 px-6">
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border <%= status_badge %>">
+                        ● <%= req.status.humanize %>
+                      </span>
+                    </td>
+
+                    <!-- Received At -->
+                    <td class="py-4 px-6 text-xs text-gray-500 whitespace-nowrap">
+                      <%= req.created_at.strftime("%b %d, %Y") %>
+                      <span class="block text-[10px] text-gray-400"><%= req.created_at.strftime("%I:%M %p") %></span>
+                    </td>
+
+                    <!-- Actions -->
+                    <td class="py-4 px-6 text-right whitespace-nowrap">
+                      <%= link_to hospital_request_path(req), 
+                            class: "px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white font-semibold text-xs transition border border-teal-200" do %>
+                        Review Details &rarr;
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% else %>
+        <div class="bg-white rounded-3xl border border-dashed border-gray-300 p-12 text-center text-gray-500">
+          <span class="text-3xl block mb-2">🏥</span>
+          <p class="font-bold text-gray-800">No hospital onboarding requests received yet</p>
+          <p class="text-xs text-gray-400 mt-1">Applications submitted from the footer link will appear here.</p>
+        </div>
+      <% end %>
+
+    </div>
+
+    <!-- ================= TAB 2: GENERAL CONTACT INQUIRIES ================= -->
+    <div id="tab-content-inquiries" class="space-y-6 hidden">
+      
+      <% if @contact_messages.present? %>
+        <div class="bg-white rounded-3xl border border-gray-200/90 shadow-sm overflow-hidden">
+          <div class="p-6 border-b border-gray-100 bg-slate-50/50 flex justify-between items-center">
+            <div>
+              <h2 class="text-base font-bold text-gray-900">Patient & Public Feedback</h2>
+              <p class="text-xs text-gray-500">Messages sent via the Contact Us form</p>
+            </div>
+            <span class="text-xs font-semibold text-teal-700 font-mono">
+              <%= @contact_messages.size %> Total Messages
+            </span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-slate-50 border-b border-gray-200/80 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  <th class="py-4 px-6">ID</th>
+                  <th class="py-4 px-6">Sender Details</th>
+                  <th class="py-4 px-6">Contact Number</th>
+                  <th class="py-4 px-6">Message Content</th>
+                  <th class="py-4 px-6">Received On</th>
+                  <th class="py-4 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                <% @contact_messages.each do |message| %>
+                  <tr class="hover:bg-slate-50/60 transition">
+                    <td class="py-4 px-6 font-mono text-xs text-slate-500">#<%= message.id %></td>
+                    
+                    <td class="py-4 px-6">
+                      <div class="font-bold text-slate-900"><%= message.name %></div>
+                      <a href="mailto:<%= message.email %>" class="text-xs text-teal-600 hover:underline">
+                        <%= message.email %>
+                      </a>
+                    </td>
+
+                    <td class="py-4 px-6 text-xs font-mono text-slate-700">
+                      <a href="tel:<%= message.contact_no %>" class="hover:text-teal-700">
+                        <%= message.contact_no %>
+                      </a>
+                    </td>
+
+                    <td class="py-4 px-6 text-xs text-slate-600 max-w-sm truncate" title="<%= message.message %>">
+                      <%= message.message.presence || "-" %>
+                    </td>
+
+                    <td class="py-4 px-6 text-xs text-slate-500 whitespace-nowrap">
+                      <%= message.created_at.strftime("%b %d, %Y") %>
+                      <span class="block text-[10px] text-gray-400"><%= message.created_at.strftime("%I:%M %p") %></span>
+                    </td>
+
+                    <td class="py-4 px-6 text-right whitespace-nowrap">
+                      <% if can? :destroy, message %>
+                        <%= button_to "Delete", contact_message_path(message), 
+                              method: :delete, 
+                              class: "text-red-600 hover:text-red-700 font-semibold text-xs cursor-pointer hover:underline bg-transparent border-0 p-0", 
+                              data: { turbo_confirm: "Are you sure you want to delete this message?" } %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% else %>
+        <div class="bg-white rounded-3xl border border-dashed border-gray-300 p-12 text-center text-gray-500">
+          <span class="text-3xl block mb-2">✉️</span>
+          <p class="font-bold text-gray-800">No contact messages received yet</p>
+          <p class="text-xs text-gray-400 mt-1">Incoming patient queries will appear here.</p>
+        </div>
+      <% end %>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= TAB TOGGLE SCRIPT ================= -->
+<script>
+  function setupInquiriesTabs() {
+    const btnHospitals = document.getElementById("tab-btn-hospitals");
+    const btnInquiries = document.getElementById("tab-btn-inquiries");
+    const tabHospitals = document.getElementById("tab-content-hospitals");
+    const tabInquiries = document.getElementById("tab-content-inquiries");
+
+    if (!btnHospitals || !btnInquiries) return;
+
+    btnHospitals.addEventListener("click", () => {
+      // Show hospitals, hide inquiries
+      tabHospitals.classList.remove("hidden");
+      tabInquiries.classList.add("hidden");
+
+      // Style active hospital button
+      btnHospitals.classList.add("text-teal-600", "border-teal-600", "font-bold");
+      btnHospitals.classList.remove("text-gray-500", "border-transparent", "font-semibold");
+
+      // Style inactive inquiry button
+      btnInquiries.classList.remove("text-teal-600", "border-teal-600", "font-bold");
+      btnInquiries.classList.add("text-gray-500", "border-transparent", "font-semibold");
+    });
+
+    btnInquiries.addEventListener("click", () => {
+      // Show inquiries, hide hospitals
+      tabInquiries.classList.remove("hidden");
+      tabHospitals.classList.add("hidden");
+
+      // Style active inquiry button
+      btnInquiries.classList.add("text-teal-600", "border-teal-600", "font-bold");
+      btnInquiries.classList.remove("text-gray-500", "border-transparent", "font-semibold");
+
+      // Style inactive hospital button
+      btnHospitals.classList.remove("text-teal-600", "border-teal-600", "font-bold");
+      btnHospitals.classList.add("text-gray-500", "border-transparent", "font-semibold");
+    });
+  }
+
+  document.addEventListener("turbo:load", setupInquiriesTabs);
+  document.addEventListener("DOMContentLoaded", setupInquiriesTabs);
+</script>

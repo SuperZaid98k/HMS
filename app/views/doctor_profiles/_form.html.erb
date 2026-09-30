@@ -1,0 +1,61 @@
+<%= form_with(model: doctor_profile, class: "needs-validation") do |form| %>
+  <% if doctor_profile.errors.any? %>
+    <div class="alert alert-danger">
+      <h5 class="alert-heading"><%= pluralize(doctor_profile.errors.count, "error") %> prohibited this doctor profile from being saved:</h5>
+      <ul class="mb-0">
+        <% doctor_profile.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :name, "Doctor Full Name", class: "form-label" %>
+    <%= form.text_field :name, class: "form-control", placeholder: "e.g. Dr. Robert Smith" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :user_id, "Link to User Account (Optional)", class: "form-label" %>
+    <%= form.collection_select :user_id, User.all, :id, ->(u) { "#{u.name} (#{u.email}) [#{u.role}]" }, { include_blank: "-- Select User Account --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :department_id, "Department", class: "form-label" %>
+    <%= form.collection_select :department_id, Department.all, :id, :name, { prompt: "-- Select Department --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :license_number, "License Number", class: "form-label" %>
+    <%= form.text_field :license_number, class: "form-control", placeholder: "e.g. DOC-98765" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :experience_years, "Years of Experience", class: "form-label" %>
+    <%= form.text_field :experience_years, class: "form-control", placeholder: "e.g. 8" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :mentor_id, "Mentor Doctor (Optional)", class: "form-label" %>
+    <%= form.collection_select :mentor_id, DoctorProfile.where.not(id: doctor_profile.id), :id, :name, { include_blank: "-- None --" }, { class: "form-control" } %>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Specializations</label>
+    <div class="card p-3">
+      <div class="row">
+        <%= form.collection_check_boxes :specialization_ids, Specialization.all, :id, :name do |b| %>
+          <div class="col-sm-3 mb-2">
+            <%= b.check_box(class: "me-1") %>
+            <%= b.label(class: "text-sm text-gray-700") %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-4">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", doctor_profiles_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

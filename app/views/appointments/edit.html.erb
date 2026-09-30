@@ -1,0 +1,40 @@
+<div class="min-h-screen bg-slate-50 py-10">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+
+    <!-- Top Breadcrumb & Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-2.5 h-6 rounded-full bg-teal-600 inline-block"></span>
+          <span class="text-xs font-bold uppercase tracking-wider text-teal-700">Rescheduling & Review</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+          Edit Appointment #<%= @appointment.id %>
+        </h1>
+        <p class="text-xs sm:text-sm text-gray-500 mt-0.5">
+          Adjust consultation date and time, reassign medical specialist, or update clinic status.
+        </p>
+      </div>
+
+      <%= link_to appointment_path(@appointment), class: "self-start sm:self-center inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-teal-700 bg-white px-3.5 py-2 rounded-xl border border-gray-200 shadow-sm hover:shadow transition" do %>
+        <span>← View Details</span>
+      <% end %>
+    </div>
+
+    <!-- Helpful Notification Banner -->
+    <div class="flex items-center gap-3 p-4 rounded-2xl bg-teal-50 border border-teal-200/80 text-teal-900 text-xs shadow-sm">
+      <div class="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center flex-shrink-0 text-sm">
+        ℹ️
+      </div>
+      <div>
+        <strong class="font-bold">Consultation Policy:</strong> Modifying the date and time will send revised itinerary alerts to both the consulting doctor and the patient.
+      </div>
+    </div>
+
+    <!-- Main Form Card -->
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-200/90 p-6 sm:p-10">
+      <%= render "form", appointment: @appointment %>
+    </div>
+
+  </div>
+</div>

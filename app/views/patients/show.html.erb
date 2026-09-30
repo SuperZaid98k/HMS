@@ -1,0 +1,350 @@
+<% 
+  profile = @patient.patient_profile 
+
+  # Safe date/time formatter that gracefully handles String, Date, DateTime, and nil
+  safe_date_format = ->(value, format = "%B %d, %Y") {
+    return "-" if value.blank?
+    if value.respond_to?(:strftime)
+      value.strftime(format)
+    else
+      (Date.parse(value.to_s).strftime(format) rescue value.to_s)
+    end
+  }
+
+  safe_time_format = ->(value, format = "%b %d, %Y at %I:%M %p") {
+    return "-" if value.blank?
+    if value.respond_to?(:strftime)
+      value.strftime(format)
+    else
+      (Time.zone.parse(value.to_s).strftime(format) rescue value.to_s)
+    end
+  }
+%>
+
+<div class="min-h-screen bg-slate-50 py-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+    <!-- 1. Patient EHR Header -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/90 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center gap-4">
+        <!-- Initials Avatar -->
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-600 to-cyan-700 text-white flex items-center justify-center font-extrabold text-2xl shadow-md flex-shrink-0">
+          <%= profile ? "#{profile.first_name[0]}#{profile.last_name[0]}".upcase : "P" %>
+        </div>
+
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+              <%= profile ? "#{profile.first_name} #{profile.last_name}" : "Patient ##{@patient.id}" %>
+            </h1>
+            
+            <% if profile&.blood_group.present? %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                <%= profile.blood_group %>
+              </span>
+            <% end %>
+          </div>
+
+          <p class="text-xs text-gray-500 font-mono mt-1 flex items-center gap-2">
+            <span>Patient ID: <strong><%= @patient.patient_number %></strong></span>
+            <span>&bull;</span>
+            <span>Registered: <%= safe_date_format.call(@patient.created_at, "%b %d, %Y") %></span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap items-center gap-2.5">
+        <% if can? :update, @patient %>
+          <%= link_to edit_patient_path(@patient), class: "px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm transition" do %>
+            ✏️ Edit Profile
+          <% end %>
+        <% end %>
+
+        <% if can? :read, Patient %>
+          <%= link_to patients_path, class: "px-4 py-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-semibold shadow-sm transition" do %>
+            ← All Patients
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 2. Demographics Card -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/90 shadow-sm space-y-4">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-teal-700 border-b border-gray-100 pb-2 flex items-center gap-2">
+        <span class="w-2 h-4 rounded-full bg-teal-600 inline-block"></span>
+        Clinical & Demographic Profile
+      </h3>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs">
+        <div>
+          <span class="text-gray-400 block mb-0.5 font-medium">Gender</span>
+          <span class="font-bold text-gray-900 capitalize text-sm"><%= profile&.gender.presence || "Unspecified" %></span>
+        </div>
+
+        <div>
+          <span class="text-gray-400 block mb-0.5 font-medium">Date of Birth</span>
+          <span class="font-bold text-gray-900 text-sm"><%= safe_date_format.call(profile&.date_of_birth, "%B %d, %Y") %></span>
+        </div>
+
+        <div>
+          <span class="text-gray-400 block mb-0.5 font-medium">Phone Number</span>
+          <span class="font-bold text-gray-900 font-mono text-sm"><%= profile&.phone.presence || "-" %></span>
+        </div>
+
+        <div>
+          <span class="text-gray-400 block mb-0.5 font-medium">Blood Type</span>
+          <span class="font-bold text-rose-600 text-sm"><%= profile&.blood_group.presence || "Not tested" %></span>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-gray-50 text-xs">
+        <span class="text-gray-400 block mb-0.5 font-medium">Residential Address</span>
+        <p class="font-medium text-gray-800"><%= profile&.address.presence || "No street address on file" %></p>
+      </div>
+    </div>
+
+    <!-- 3. Clinical Action Shortcuts -->
+    <div class="flex flex-wrap gap-2.5">
+      <% if can? :create, Appointment %>
+        <%= link_to new_appointment_path(patient_id: @patient.id), 
+              class: "px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5" do %>
+          <span>📅</span> + New Appointment
+        <% end %>
+      <% end %>
+
+      <% if can? :create, MedicalRecord %>
+        <%= link_to new_medical_record_path(patient_id: @patient.id), 
+              class: "px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5" do %>
+          <span>📋</span> + Add Medical Record
+        <% end %>
+      <% end %>
+
+      <% if can? :create, LabTest %>
+        <%= link_to new_lab_test_path(patient_id: @patient.id), 
+              class: "px-4 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5" do %>
+          <span>🔬</span> + Order Lab Test
+        <% end %>
+      <% end %>
+
+      <% if can? :create, Admission %>
+        <%= link_to new_admission_path(patient_id: @patient.id), 
+              class: "px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5" do %>
+          <span>🛏️</span> + Admit Patient
+        <% end %>
+      <% end %>
+
+      <% if can? :create, Invoice %>
+        <%= link_to new_invoice_path(patient_id: @patient.id), 
+              class: "px-4 py-2.5 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs shadow-sm transition flex items-center gap-1.5" do %>
+          <span>💳</span> + Create Invoice
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- 4. Appointments History Section -->
+    <div class="bg-white rounded-3xl border border-gray-200/90 shadow-sm overflow-hidden">
+      <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+        <div>
+          <h3 class="text-base font-bold text-gray-900">Appointments</h3>
+          <p class="text-xs text-gray-500">History of outpatient visits and doctor consultations</p>
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-100">
+          <%= @patient.appointments.size %> Total
+        </span>
+      </div>
+
+      <% if @patient.appointments.present? %>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 border-b border-gray-100">
+                <th class="py-3 px-6">ID</th>
+                <th class="py-3 px-6">Specialist Doctor</th>
+                <th class="py-3 px-6">Scheduled Date & Time</th>
+                <th class="py-3 px-6">Status</th>
+                <th class="py-3 px-6">Reason for Visit</th>
+                <th class="py-3 px-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <% @patient.appointments.each do |app| %>
+                <tr class="hover:bg-slate-50/50 transition">
+                  <td class="py-3.5 px-6 font-mono font-bold text-teal-800">#<%= app.id %></td>
+                  <td class="py-3.5 px-6 font-semibold text-gray-900">Dr. <%= app.doctor_profile&.name || "Consultant" %></td>
+                  <td class="py-3.5 px-6 text-gray-600"><%= safe_time_format.call(app.scheduled_at, "%b %d, %Y at %I:%M %p") %></td>
+                  <td class="py-3.5 px-6">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-teal-50 text-teal-800 border border-teal-200">
+                      <%= app.status %>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-6 text-gray-600 max-w-xs truncate"><%= app.reason.presence || "General consultation" %></td>
+                  <td class="py-3.5 px-6 text-right">
+                    <% if can? :read, app %>
+                      <%= link_to "View Details", appointment_path(app), class: "text-teal-700 hover:text-teal-800 font-bold hover:underline" %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="p-8 text-center text-xs text-gray-400">
+          No appointments recorded for this patient.
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 5. Medical Records Section -->
+    <div class="bg-white rounded-3xl border border-gray-200/90 shadow-sm overflow-hidden">
+      <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+        <div>
+          <h3 class="text-base font-bold text-gray-900">Medical Diagnoses & Clinical Records</h3>
+          <p class="text-xs text-gray-500">Verified doctor diagnoses, prescriptions, and therapy notes</p>
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-cyan-50 text-cyan-800 border border-cyan-100">
+          <%= @patient.medical_records.size %> Records
+        </span>
+      </div>
+
+      <% if @patient.medical_records.present? %>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 border-b border-gray-100">
+                <th class="py-3 px-6">ID</th>
+                <th class="py-3 px-6">Clinical Diagnosis</th>
+                <th class="py-3 px-6">Examining Clinician</th>
+                <th class="py-3 px-6">Description / Notes</th>
+                <th class="py-3 px-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <% @patient.medical_records.each do |mr| %>
+                <tr class="hover:bg-slate-50/50 transition">
+                  <td class="py-3.5 px-6 font-mono font-bold text-cyan-800">#<%= mr.id %></td>
+                  <td class="py-3.5 px-6 font-bold text-gray-900"><%= mr.diagnosis %></td>
+                  <td class="py-3.5 px-6 text-gray-600">Dr. <%= mr.doctor_profile&.name || "Specialist" %></td>
+                  <td class="py-3.5 px-6 text-gray-600 max-w-sm truncate"><%= mr.description %></td>
+                  <td class="py-3.5 px-6 text-right">
+                    <% if can? :read, mr %>
+                      <%= link_to "View Chart", medical_record_path(mr), class: "text-cyan-700 hover:text-cyan-800 font-bold hover:underline" %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="p-8 text-center text-xs text-gray-400">
+          No medical records uploaded for this patient.
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 6. Inpatient Admissions History -->
+    <div class="bg-white rounded-3xl border border-gray-200/90 shadow-sm overflow-hidden">
+      <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+        <div>
+          <h3 class="text-base font-bold text-gray-900">Inpatient Admissions</h3>
+          <p class="text-xs text-gray-500">Bed allocation, ward transfers, and discharge records</p>
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-100">
+          <%= @patient.admissions.size %> Total
+        </span>
+      </div>
+
+      <% if @patient.admissions.present? %>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500 border-b border-gray-100">
+                <th class="py-3 px-6">ID</th>
+                <th class="py-3 px-6">Bed & Ward Unit</th>
+                <th class="py-3 px-6">Admitted At</th>
+                <th class="py-3 px-6">Discharged At</th>
+                <th class="py-3 px-6">Status</th>
+                <th class="py-3 px-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <% @patient.admissions.each do |adm| %>
+                <tr class="hover:bg-slate-50/50 transition">
+                  <td class="py-3.5 px-6 font-mono font-bold text-amber-800">#<%= adm.id %></td>
+                  <td class="py-3.5 px-6 font-semibold text-gray-900">
+                    Bed #<%= adm.bed&.bed_number %> (Room <%= adm.bed&.room&.room_number %>)
+                  </td>
+                  <td class="py-3.5 px-6 text-gray-600"><%= safe_date_format.call(adm.admitted_at, "%b %d, %Y") %></td>
+                  <td class="py-3.5 px-6 text-gray-600"><%= adm.discharged_at.present? ? safe_date_format.call(adm.discharged_at, "%b %d, %Y") : "Active Stay" %></td>
+                  <td class="py-3.5 px-6">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+                      <%= adm.status %>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-6 text-right">
+                    <% if can? :read, adm %>
+                      <%= link_to "Admission Details", admission_path(adm), class: "text-amber-700 hover:text-amber-800 font-bold hover:underline" %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="p-8 text-center text-xs text-gray-400">
+          No inpatient admission history recorded.
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 7. Insurance Policy Card -->
+    <div class="bg-white rounded-3xl border border-gray-200/90 shadow-sm p-6 sm:p-8 space-y-4">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+        <div>
+          <h3 class="text-base font-bold text-gray-900">Insurance & TPA Coverage</h3>
+          <p class="text-xs text-gray-500">Cashless mediclaim policy linked to this patient ID</p>
+        </div>
+        
+        <% if can?(:create, InsurancePolicy) && !@patient.insurance_policy %>
+          <%= link_to "+ Link Insurance Policy", new_patient_insurance_policy_path(@patient), 
+                class: "px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-sm transition" %>
+        <% end %>
+      </div>
+
+      <% if @patient.insurance_policy %>
+        <% pol = @patient.insurance_policy %>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs">
+          <div>
+            <span class="text-gray-400 block mb-0.5 font-medium">Provider Name</span>
+            <span class="font-bold text-gray-900 text-sm"><%= pol.provider_name %></span>
+          </div>
+          <div>
+            <span class="text-gray-400 block mb-0.5 font-medium">Policy / TPA ID</span>
+            <span class="font-bold text-gray-900 font-mono text-sm"><%= pol.policy_number %></span>
+          </div>
+          <div>
+            <span class="text-gray-400 block mb-0.5 font-medium">Approved Sum Insured</span>
+            <span class="font-bold text-emerald-600 font-mono text-sm"><%= number_to_currency(pol.coverage_amount, unit: "₹ ") rescue pol.coverage_amount %></span>
+          </div>
+          <div>
+            <span class="text-gray-400 block mb-0.5 font-medium">Validity Period</span>
+            <span class="font-medium text-gray-800 text-xs"><%= safe_date_format.call(pol.valid_from, "%b %Y") %> - <%= safe_date_format.call(pol.valid_until, "%b %Y") %></span>
+          </div>
+        </div>
+      <% else %>
+        <div class="p-6 rounded-2xl bg-slate-50 border border-gray-200/80 text-center text-xs text-gray-500">
+          No active mediclaim or insurance policy associated with this patient account.
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 8. Documents Section -->
+    <div class="bg-white rounded-3xl border border-gray-200/90 shadow-sm p-6 sm:p-8">
+      <%= render "documents/documents_section", documentable: @patient %>
+    </div>
+
+  </div>
+</div>

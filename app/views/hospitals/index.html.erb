@@ -1,0 +1,120 @@
+<%
+  hospital_images = [
+    "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&w=800&q=80"
+  ]
+%>
+
+<div class="min-h-screen bg-slate-50 space-y-8 pb-16">
+  
+  <!-- Header Banner -->
+  <section class="bg-gradient-to-r from-teal-800 via-teal-700 to-cyan-800 text-white py-12 px-4 sm:px-6 lg:px-8 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-teal-100 text-xs font-semibold uppercase tracking-wider backdrop-blur-md mb-2">
+          🏥 Accredited Network
+        </span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">Partner Hospitals & Clinics</h1>
+        <p class="text-teal-100 text-sm sm:text-base mt-1 max-w-2xl">
+          Browse multi-specialty inpatient healthcare centers, accredited emergency trauma facilities, and clinical wards.
+        </p>
+      </div>
+
+      <% if can? :create, Hospital %>
+        <%= link_to new_hospital_path, class: "inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-teal-900 font-bold text-xs hover:bg-teal-50 shadow-md transition transform hover:-translate-y-0.5" do %>
+          <span>+ Register Hospital</span>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Hospital Cards Grid -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <% if @hospitals.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @hospitals.each do |hospital| %>
+          <% hosp_img = hospital_images[hospital.id % hospital_images.length] %>
+
+          <div class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:border-teal-500 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
+            <div>
+              <!-- Building Visual Banner -->
+              <div class="relative w-full h-48 overflow-hidden bg-slate-100">
+                <img src="<%= hosp_img %>" 
+                     alt="<%= hospital.name %>" 
+                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+
+                <div class="absolute top-3 left-3 flex gap-1.5">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/95 text-teal-900 shadow-sm backdrop-blur-sm">
+                    NABH Accredited
+                  </span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500 text-white shadow-sm">
+                    24/7 Open
+                  </span>
+                </div>
+
+                <div class="absolute bottom-3 left-4 right-4 text-white">
+                  <span class="text-[11px] font-medium text-teal-200 block uppercase tracking-wider">Medical Center</span>
+                  <h3 class="text-xl font-bold truncate leading-tight"><%= hospital.name %></h3>
+                </div>
+              </div>
+
+              <!-- Hospital Info -->
+              <div class="p-5 space-y-3">
+                <p class="text-xs text-gray-600 flex items-start gap-2 leading-relaxed">
+                  <svg class="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span class="line-clamp-2"><%= hospital.address.presence || "Central Medical District, City Center" %></span>
+                </p>
+
+                <p class="text-xs text-gray-600 flex items-center gap-2 font-medium">
+                  <svg class="w-4 h-4 text-teal-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                  <span><%= hospital.phone.presence || "Emergency Helpline on Record" %></span>
+                </p>
+
+                <!-- Facility Badges -->
+                <div class="flex flex-wrap gap-1.5 pt-2 text-[10px] text-gray-500 font-medium border-t border-gray-100">
+                  <span class="px-2 py-0.5 rounded-md bg-teal-50 text-teal-700 font-semibold border border-teal-100">
+                    <%= hospital.departments.size rescue 0 %> Depts
+                  </span>
+                  <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">ICU & Trauma</span>
+                  <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">Diagnostics</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="px-5 py-3 bg-slate-50 border-t border-gray-100 flex justify-between items-center text-xs">
+              <% if can? :read, hospital %>
+                <%= link_to hospital_path(hospital), class: "text-teal-700 hover:text-teal-800 font-bold flex items-center gap-1 group" do %>
+                  <span>Explore Center</span>
+                  <span class="group-hover:translate-x-1 transition-transform">→</span>
+                <% end %>
+              <% end %>
+
+              <div class="flex items-center gap-3">
+                <% if can? :update, hospital %>
+                  <%= link_to "Edit", edit_hospital_path(hospital), class: "text-amber-600 hover:underline font-semibold" %>
+                <% end %>
+                <% if can? :destroy, hospital %>
+                  <%= button_to "Delete", hospital_path(hospital), 
+                                method: :delete, 
+                                class: "text-red-600 hover:underline bg-transparent border-0 p-0 text-xs font-semibold cursor-pointer",
+                                data: { turbo_confirm: "Are you sure you want to delete #{hospital.name}?" } %>
+                <% end %>
+              </div>
+            </div>
+
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-white rounded-2xl border border-dashed border-gray-300 p-12 text-center text-gray-500">
+        <p class="text-base font-semibold text-gray-700 mb-1">No hospitals found.</p>
+        <p class="text-xs text-gray-400">Click "Register Hospital" above to add the first facility.</p>
+      </div>
+    <% end %>
+  </div>
+
+</div>

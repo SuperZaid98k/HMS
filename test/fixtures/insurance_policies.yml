@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  patient_id: 1
+  provider_name: MyString
+  policy_number: MyString
+  coverage_amount: MyString
+  valid_from: MyString
+  valid_until: MyString
+
+two:
+  patient_id: 1
+  provider_name: MyString
+  policy_number: MyString
+  coverage_amount: MyString
+  valid_from: MyString
+  valid_until: MyString

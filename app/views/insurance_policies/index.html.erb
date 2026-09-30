@@ -1,0 +1,63 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Insurance Policies</h1>
+    <% if can? :create, InsurancePolicy %>
+      <%= link_to "Add Insurance Policy", new_insurance_policy_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+
+
+  <% if @insurance_policies.any? %>
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Patient</th>
+          <th>Provider Name</th>
+          <th>Policy Number</th>
+          <th>Coverage Amount</th>
+          <th>Validity</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @insurance_policies.each do |pol| %>
+          <tr>
+            <td><%= pol.id %></td>
+            <td>
+              <% if pol.patient&.patient_profile %>
+                <%= link_to "#{pol.patient.patient_profile.first_name} #{pol.patient.patient_profile.last_name}", patient_path(pol.patient) %>
+              <% else %>
+                Patient #<%= pol.patient_id %>
+              <% end %>
+            </td>
+            <td><strong><%= pol.provider_name %></strong></td>
+            <td><%= pol.policy_number %></td>
+            <td><%= pol.coverage_amount %></td>
+            <td><%= pol.valid_from %> to <%= pol.valid_until %></td>
+            <td class="text-end">
+              <% if can? :read, pol %>
+                <%= link_to "Details", insurance_policy_path(pol), class: "btn btn-sm btn-info text-white me-1" %>
+              <% end %>
+              <% if can? :update, pol %>
+                <%= link_to "Edit", edit_insurance_policy_path(pol), class: "btn btn-sm btn-warning me-1" %>
+              <% end %>
+              <% if can? :destroy, pol %>
+                <%= button_to "Delete", insurance_policy_path(pol), 
+                              method: :delete, 
+                              class: "btn btn-sm btn-danger d-inline", 
+                              form: { style: "display:inline-block;" },
+                              data: { turbo_confirm: "Are you sure you want to delete this policy?" } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="alert alert-info">
+      No insurance policies found. Click "Add Insurance Policy" to create one.
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,18 @@
+<%# 1. Append the new batch of rows into the table %>
+<%= turbo_stream.append "users-table-body" do %>
+  <%= render partial: "users/user_row", collection: @users, as: :user %>
+<% end %>
+
+<%# 2. Advance or remove the sentinel %>
+<% if @has_next_page %>
+  <%= turbo_stream.replace "scroll-sentinel" do %>
+    <%= render "users/scroll_sentinel", next_page: @page + 1 %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.remove "scroll-sentinel" %>
+  <%= turbo_stream.append "users-container" do %>
+    <p id="all-users-loaded-msg" class="py-6 text-center text-xs font-semibold text-gray-400">
+      ✓ All <%= @total_users_count %> users loaded
+    </p>
+  <% end %>
+<% end %>

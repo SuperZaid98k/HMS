@@ -1,0 +1,44 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Insurance Policy #<%= @insurance_policy.policy_number %></h1>
+    <div class="d-flex gap-2">
+      <% if can? :update, @insurance_policy %>
+        <%= link_to "Edit Policy", edit_insurance_policy_path(@insurance_policy), class: "btn btn-warning" %>
+      <% end %>
+      <%= link_to "Back to Policies", insurance_policies_path, class: "btn btn-outline-secondary" %>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      Policy Details
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-3 fw-semibold">Patient:</div>
+        <div class="col-sm-9 mb-3">
+          <% if @insurance_policy.patient&.patient_profile %>
+            <%= link_to "#{@insurance_policy.patient.patient_profile.first_name} #{@insurance_policy.patient.patient_profile.last_name}", patient_path(@insurance_policy.patient) %>
+          <% else %>
+            Patient #<%= @insurance_policy.patient_id %>
+          <% end %>
+        </div>
+
+        <div class="col-sm-3 fw-semibold">Provider Name:</div>
+        <div class="col-sm-9 mb-3"><strong><%= @insurance_policy.provider_name %></strong></div>
+
+        <div class="col-sm-3 fw-semibold">Policy Number:</div>
+        <div class="col-sm-9 mb-3"><%= @insurance_policy.policy_number %></div>
+
+        <div class="col-sm-3 fw-semibold">Coverage Amount:</div>
+        <div class="col-sm-9 mb-3">$<%= @insurance_policy.coverage_amount %></div>
+
+        <div class="col-sm-3 fw-semibold">Valid From:</div>
+        <div class="col-sm-9 mb-3"><%= @insurance_policy.valid_from %></div>
+
+        <div class="col-sm-3 fw-semibold">Valid Until:</div>
+        <div class="col-sm-9 mb-3"><%= @insurance_policy.valid_until %></div>
+      </div>
+    </div>
+  </div>
+</div>
